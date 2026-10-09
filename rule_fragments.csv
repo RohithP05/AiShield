@@ -5,3 +5,5 @@ READ_VERBS,(?:cat|less|more|head|tail|nl|tac|cp|scp|rsync|tar|zip|7z|gzip|base64
 NET_TOOLS,(?:curl|wget|nc|ncat|netcat|socat|telnet|ftp|sftp|scp)
 SEC_TOOLS,(?:auditd|falcon|osqueryd?|wazuh|clamd?|ossec|sysmon|crowdstrike|cbagent|sentinel|snort|suricata|tripwire|aide|rkhunter|chkrootkit|fail2ban|ufw|apparmor|firewalld|selinux|rsyslogd?|syslogd?|syslog-ng|journald|defender)
 EXFIL_HOSTS,(?:pastebin\.com|paste\.ee|hastebin|transfer\.sh|file\.io|0x0\.st|ix\.io|termbin\.com|webhook\.site|requestbin|pipedream\.net|ngrok\.(?:io|app|dev)|discord(?:app)?\.com/api/webhooks|api\.telegram\.org/bot|interact\.sh|oast\.(?:pro|live|site|online|fun|me)|burpcollaborator|canarytokens|\.onion\b)
+CMD_POS,(?:^|[;&|]\s*|\b(?:sudo|doas|command|nice|ionice|nohup|env|time|timeout|exec|su|pkexec|runuser|xargs|then|else|do)\s+(?:(?:-\S+|\d+(?:\.\d+)?[a-z]?)\s+)*|\b(?:ba|z|da|k|fi)?sh\s+(?:-\S+\s+)*-[a-zA-Z]*c[a-zA-Z]*\s+[\""']|[{(!]\s*)
+NO_HELP,(?!\s+--?(?:help|usage|version|h)(?=\s|$|[;&|]))

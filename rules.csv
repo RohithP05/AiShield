@@ -8,7 +8,7 @@ HIGH,decode-exec,T1140/T1027,decodes an obfuscated payload and executes it,no,\b
 HIGH,eval-decode,T1027,eval / exec of encoded or downloaded data,no,"(?:\beval\s+[\""']?\$\(.*\b(?:base64|xxd|openssl|curl|wget)\b|exec\(.*(?:b64decode|decode\(['\""]base64|zlib\.decompress|marshal\.loads|codecs\.decode))"
 MEDIUM,pipe-to-shell,T1059.004,pipes data into a shell interpreter,no,\|\s*(?:sudo\s+)?(?:(?:/\S*/)?(?:ba|z|da|k)?sh)\b(?!\s+\S+\.sh)
 MEDIUM,hex-blob,T1027,long hex-escaped blob (obfuscation),no,"(?:\\x[0-9a-f]{2}){8,}"
-MEDIUM,exec-from-tmp,T1059.004,runs / chmods a file in a world-writable staging directory,no,(?:^|[;&|]\s*|\bsudo\s+)(?:/tmp|/dev/shm|/var/tmp)/\S+|\bchmod\s+\S+\s+(?:/tmp|/dev/shm|/var/tmp)/
+MEDIUM,exec-from-tmp,T1059.004,runs / chmods a file in a world-writable staging directory,no,(?:^|[;&|]\s*|\bsudo\s+)(?:/tmp|/dev/shm|/var/tmp)/\S+|{{CMD_POS}}chmod\s+\S+\s+(?:/tmp|/dev/shm|/var/tmp)/
 CRITICAL,revshell-devtcp,T1059.004,bash /dev/tcp reverse shell,no,/dev/(?:tcp|udp)/\S+.*(?:>&|<&|0>&1|\bexec\s+\d)|(?:>&|\bexec\s+\d<>)\s*/dev/(?:tcp|udp)/
 HIGH,bash-i,T1059.004,interactive shell started non-interactively (reverse-shell pattern),no,\b(?:ba|z|da)?sh\s+-i\b
 CRITICAL,nc-exec,T1059.004,netcat/ncat launching a shell,no,\b(?:nc|ncat|netcat)\b[^|;&]*\s-\w*[ec]\b
@@ -34,32 +34,32 @@ HIGH,exfil-host,T1567,talks to a paste / webhook / tunnel service commonly used 
 MEDIUM,raw-ip-url,T1105,URL points at a raw public IP address,no,"https?://(?!127\.|10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.|0\.0\.0\.0|169\.254\.)(?:\d{1,3}\.){3}\d{1,3}"
 MEDIUM,remote-copy,T1048,copies data to a remote host (scp/rsync user@host:),no,\b(?:scp|rsync|sftp)\b[^|;&]*\S+@\S+:
 HIGH,cron-write,T1053.003,adds a cron job,no,\(\s*crontab\s+-l\b.*\)\s*\|\s*crontab\b|(?:>>?|\btee\b(?:\s+-a)?|\bcp\b|\bmv\b|\bln\b|\binstall\b)\s*\S*(?:/etc/cron|/var/spool/cron)
-MEDIUM,crontab-edit,T1053.003,modifies the crontab,no,\bcrontab\s+(?!-l\b)\S+
+MEDIUM,crontab-edit,T1053.003,modifies the crontab,no,{{CMD_POS}}crontab{{NO_HELP}}\s+(?!-l\b)\S+
 HIGH,systemd-unit-write,T1543.002,creates or replaces a systemd unit,no,(?:>>?|\btee\b|\bcp\b|\bmv\b|\bln\b)[^|;&]*(?:/etc/systemd/system|/lib/systemd/system|/usr/lib/systemd/system|\.config/systemd/user)
 MEDIUM,systemd-enable,T1543.002,enables a service at boot,no,\bsystemctl\s+(?:--user\s+)?enable\b
 HIGH,profile-persist-exec,T1546.004,appends a download / shell payload to a shell startup file,no,(?:>>|\btee\s+-a)\s*\S*(?:\.bashrc|\.bash_profile|\.profile|\.zshrc|\.zprofile|\.zshenv|/etc/profile\S*|/etc/bash\.bashrc|/etc/environment|/etc/rc\.local|/etc/init\.d/\S+|autostart/\S+).*(?:curl|wget|\bnc\b|bash\s+-i|/dev/tcp|base64|\beval\b|python[\d.]*\s+-c|sh\s+-c|nohup)
 MEDIUM,profile-append,T1546.004,modifies a shell startup file,no,(?:>>|\btee\s+-a)\s*\S*(?:\.bashrc|\.bash_profile|\.profile|\.zshrc|\.zprofile|\.zshenv|/etc/profile\S*|/etc/bash\.bashrc|/etc/environment|/etc/rc\.local|autostart/\S+)
 HIGH,authorized-keys,T1098.004,modifies SSH authorized_keys,no,(?:>>?|\btee\b|\bcp\b|\bmv\b|\bsed\s+-i|\bssh-copy-id\b)[^|;&]*authorized_keys
 HIGH,ld-preload,T1574.006,LD_PRELOAD / ld.so.preload hijack,no,\bLD_PRELOAD\s*=|/etc/ld\.so\.preload
-HIGH,account-tamper,T1136.001/T1098,edits passwd/shadow/sudoers or grants admin rights,no,(?:>>?|\btee\b)\s*\S*/etc/(?:passwd|shadow|sudoers(?:\.d/\S*)?|group)\b|\bsed\s+-i\b[^|;&]*/etc/(?:passwd|shadow|sudoers)|\busermod\b[^|;&]*-a?G\s*\S*(?:sudo|wheel|root|admin)\b|\bNOPASSWD\b|\bchpasswd\b
-MEDIUM,account-mgmt,T1136.001,creates or changes user accounts,no,\b(?:useradd|adduser|usermod|groupadd|gpasswd|passwd|visudo|vipw)\b
+HIGH,account-tamper,T1136.001/T1098,edits passwd/shadow/sudoers or grants admin rights,no,(?:>>?|\btee\b)\s*\S*/etc/(?:passwd|shadow|sudoers(?:\.d/\S*)?|group)\b|\bsed\s+-i\b[^|;&]*/etc/(?:passwd|shadow|sudoers)|{{CMD_POS}}usermod\b[^|;&]*-a?G\s*\S*(?:sudo|wheel|root|admin)\b|\bNOPASSWD\b|{{CMD_POS}}chpasswd\b{{NO_HELP}}
+MEDIUM,account-mgmt,T1136.001,creates or changes user accounts,no,{{CMD_POS}}(?:useradd|adduser|usermod|groupadd|gpasswd|passwd|visudo|vipw)\b{{NO_HELP}}
 HIGH,setuid,T1548.001,sets the setuid/setgid bit,no,\bchmod\s+(?:-\w+\s+)*(?:[ugoa]*\+s\b|[ugoa]*[+=][rwx]*s\b|[2467][0-7]{3}\b)
-MEDIUM,caps-immutable,T1548/T1222,setcap / chattr +i (privilege or tamper-proofing),no,\bsetcap\b|\bchattr\s+[-+]\w*i
-MEDIUM,kernel-module,T1547.006,loads or unloads kernel modules,no,\b(?:insmod|modprobe|rmmod|kexec)\b
+MEDIUM,caps-immutable,T1548/T1222,setcap / chattr +i (privilege or tamper-proofing),no,{{CMD_POS}}setcap\b{{NO_HELP}}|{{CMD_POS}}chattr\s+[-+]\w*i
+MEDIUM,kernel-module,T1547.006,loads or unloads kernel modules,no,{{CMD_POS}}(?:insmod|modprobe|rmmod|kexec)\b{{NO_HELP}}
 MEDIUM,git-hooks,T1546,writes git hooks (runs code on later git actions),no,(?:>>?|\btee\b|\bcp\b|\bmv\b|\bln\b|\bchmod\b)[^|;&]*\.git/hooks/
 HIGH,git-config-exec,T1546,git config that runs arbitrary commands,no,"\bgit\s+config\b.*(?:core\.(?:sshcommand|fsmonitor|hookspath|pager|editor)|alias\.\S+\s+['\""]?!)"
 MEDIUM,agent-config-write,T1546,modifies AI-agent / IDE config or instruction files (possible prompt-injection persistence),no,(?:>>?|\btee\b|\bsed\s+-i|\bcp\b|\bmv\b)[^|;&]*(?:\.vscode/(?:tasks|settings|launch)\.json|\.cursor/|\.cursorrules|mcp\.json|copilot-instructions\.md|claude\.md|agents\.md|\.claude/|\.windsurf|\.codex/|\.github/workflows/)
-MEDIUM,agent-autoapprove,T1562,tries to disable agent confirmation / auto-approve tool use,no,autoapprove|--dangerously-skip-permissions|--yolo\b|chat\.tools\.(?:global\.)?autoapprove
+MEDIUM,agent-autoapprove,T1685,tries to disable agent confirmation / auto-approve tool use,no,autoapprove|--dangerously-skip-permissions|--yolo\b|chat\.tools\.(?:global\.)?autoapprove
 MEDIUM,pkg-source-change,T1195,installs packages from a non-default index / registry,no,\b(?:pip3?|python[\d.]*\s+-m\s+pip)\s+install\b.*(?:--index-url|--extra-index-url|--trusted-host|\s-i\s)|\bnpm\s+(?:config\s+set\s+registry|(?:install|i)\b.*--registry)|(?:>>?|\btee\b|\bcp\b|\bmv\b)[^|;&]*(?:/etc/apt/sources|/etc/apt/trusted)|\bapt-key\s+add\b|\badd-apt-repository\b
 HIGH,history-wipe,T1070.003,erases or disables shell history,no,\bhistory\s+-[cw]\b|\bunset\s+HISTFILE\b|HISTFILE\s*=\s*/dev/null|\bHISTSIZE\s*=\s*0\b|\bset\s+\+o\s+history\b|>\s*\S*\.(?:bash|zsh)_history|\b(?:rm|shred|truncate)\b[^|;&]*\.(?:bash|zsh)_history
-HIGH,log-tamper,T1070.002,deletes or truncates system logs,no,(?:\brm\b|\bshred\b|\btruncate\b|\bunlink\b|>\s*|\bjournalctl\s+--vacuum\S*)[^|;&]*(?:/var/log/|/var/run/utmp|wtmp|lastlog)
-HIGH,security-off,T1562.001/T1562.004,disables a firewall / audit / security tool,no,\bsystemctl\s+(?:stop|disable|mask)\s+[^|;&]*{{SEC_TOOLS}}|\bservice\s+\S*{{SEC_TOOLS}}\S*\s+stop\b|\bufw\s+disable\b|\bsetenforce\s+0\b|\bauditctl\s+(?:-e\s*0|-D)\b|\biptables\s+(?:-F|--flush|-P\s+\w+\s+ACCEPT)|\bnft\s+flush\s+ruleset|\b(?:pkill|killall|kill)\b[^|;&]*\b{{SEC_TOOLS}}\b
+HIGH,log-tamper,T1685.006,deletes or truncates system logs,no,(?:\brm\b|\bshred\b|\btruncate\b|\bunlink\b|>\s*|\bjournalctl\s+--vacuum\S*)[^|;&]*(?:/var/log/|/var/run/utmp|wtmp|lastlog)
+HIGH,security-off,T1685/T1686,disables a firewall / audit / security tool,no,\bsystemctl\s+(?:stop|disable|mask)\s+[^|;&]*{{SEC_TOOLS}}|\bservice\s+\S*{{SEC_TOOLS}}\S*\s+stop\b|\bufw\s+disable\b|\bsetenforce\s+0\b|\bauditctl\s+(?:-e\s*0|-D)\b|\biptables\s+(?:-F|--flush|-P\s+\w+\s+ACCEPT)|\bnft\s+flush\s+ruleset|\b(?:pkill|killall|kill)\b[^|;&]*\b{{SEC_TOOLS}}\b
 HIGH,sysrq,T1529,writes to /proc/sysrq-trigger (crash / reboot / kill processes),no,/proc/sysrq-trigger
 MEDIUM,timestomp,T1070.006,modifies file timestamps (timestomping),no,\btouch\s+(?:-\w*[rt]\b|-\w*[rt]\w*\s)
-MEDIUM,sysctl-write,T1562,writes kernel parameters via /proc/sys,no,>\s*/proc/sys/
+MEDIUM,sysctl-write,T1685,writes kernel parameters via /proc/sys,no,>\s*/proc/sys/
 CRITICAL,rm-root,T1485,"recursive delete of / , ~ or a system directory",no,\brm\b\s+(?:-\S+\s+)*(?:--no-preserve-root|-\w*[rR]\w*)\s+(?:-\S+\s+)*(?:/|/\*|~/?\*?|\$HOME/?\*?|/home/?\*?|/etc|/usr|/var|/boot|/bin|/sbin|/lib\S*|/root|/opt|/srv)(?=\s|$|[;&|])|--no-preserve-root
 MEDIUM,rm-cwd-wipe,T1485,recursive delete of everything in the current/parent directory,no,\brm\s+(?:-\S+\s+)*-\w*[rR]\w*\s+(?:-\S+\s+)*(?:\*|\.\*|\.|\./\*|\.\.|\.\./\*)(?=\s|$|[;&|])
-CRITICAL,disk-destroy,T1561,overwrites or formats a disk device,no,\bmkfs(?:\.\w+)?\b|\bmke2fs\b|\bwipefs\b|\bdd\b[^|;&]*\bof=/dev/(?:sd|hd|nvme|vd|xvd|mmcblk|disk|mapper)\S*|\bshred\b[^|;&]*/dev/|>\s*/dev/(?:sd|hd|nvme|vd)\w*
+CRITICAL,disk-destroy,T1561,overwrites or formats a disk device,no,{{CMD_POS}}(?:mkfs(?:\.\w+)?|mke2fs|wipefs)\b{{NO_HELP}}|\bdd\b[^|;&]*\bof=/dev/(?:sd|hd|nvme|vd|xvd|mmcblk|disk|mapper)\S*|\bshred\b[^|;&]*/dev/|>\s*/dev/(?:sd|hd|nvme|vd)\w*
 CRITICAL,fork-bomb,T1499,fork bomb,no,:\s*\(\s*\)\s*\{\s*:\s*\|\s*:\s*&\s*\}\s*;\s*:
 HIGH,mass-perm-change,T1222,recursive chmod/chown or delete starting at /,no,\bch(?:mod|own)\s+(?:-\w+\s+)*-[a-z]*R[a-z]*\s+\S+\s+/(?:\s|$|etc|usr|var|home|bin|boot|lib)|\bfind\s+/\s+[^|;&]*(?:-delete|-exec\s+rm)
 HIGH,container-escape,T1611,privileged container / host takeover,no,\bdocker\s+run\b[^|;&]*(?:--privileged|\s-v\s*/:|--pid=host|--cap-add\s*=?\s*(?:sys_admin|all)|/var/run/docker\.sock)|\bnsenter\b[^|;&]*(?:-t\s*1\b|--target\s*1\b)|\bchroot\s+/host
@@ -68,8 +68,8 @@ MEDIUM,privesc-recon,T1548.001/T1082,hunts for SUID binaries / capabilities,no,\
 HIGH,gtfo-exec,T1059.004,abuses a tool to spawn a shell,no,\bfind\b[^|;&]*-exec\s+(?:/bin/)?(?:ba)?sh\b|\btar\b[^|;&]*--checkpoint-action=exec|\bzip\b[^|;&]*-T\s+-TT
 MEDIUM,mount-ns,T1611,mount / namespace manipulation,no,\bmount\b[^|;&]*(?:--bind|-o\s+bind|/dev/(?:sd|nvme))|\bunshare\b[^|;&]*-r\b
 MEDIUM,system-write,T1565.001,writes directly into a system directory,no,(?:>>?|\btee\b(?:\s+-a)?)\s*/(?:etc|usr|bin|sbin|lib\d*|boot|root|sys)/
-HIGH,attack-tool,T1588.002,known offensive-security / post-exploitation tool,no,\b(?:mimipenguin|lazagne|linpeas|linenum|pspy(?:64)?|linux-exploit-suggester|crackmapexec|impacket-\w+|hashcat|hydra|medusa|sqlmap|nikto|gobuster|feroxbuster|ffuf|wfuzz|msfconsole|msfvenom|meterpreter|sliver-\w+|pwncat|weevely|chisel|ligolo\S*|mimikatz|john\s+--(?:wordlist|format|show)|responder\s+-I)\b
-HIGH,crypto-miner,T1496,cryptocurrency miner,no,\b(?:xmrig|minerd|cpuminer|ethminer|nbminer|cgminer|bfgminer|minergate|nicehash)\b|stratum\+(?:tcp|ssl)|--donate-level|pool\.(?:minexmr|supportxmr|hashvault)
-MEDIUM,net-scan,T1046,network scanner,no,\b(?:nmap|masscan|zmap|unicornscan|nbtscan|arp-scan|netdiscover)\b
-MEDIUM,sniff-spoof,T1040,packet sniffing / spoofing,no,\b(?:tcpdump|tshark|ettercap|bettercap|arpspoof|dsniff)\b
-MEDIUM,tunnel,T1572,tunnelling / proxy tooling,no,\bssh\b[^|;&]*\s-\w*[RD]\b|\b(?:ngrok|localtunnel|cloudflared\s+tunnel|serveo|frpc|frps|proxychains|torsocks|sshuttle|iodine|dnscat2?)\b
+HIGH,attack-tool,T1588.002,known offensive-security / post-exploitation tool,no,{{CMD_POS}}(?:mimipenguin|lazagne|linpeas|linenum|pspy(?:64)?|linux-exploit-suggester|crackmapexec|impacket-\w+|hashcat|hydra|medusa|sqlmap|nikto|gobuster|feroxbuster|ffuf|wfuzz|msfconsole|msfvenom|meterpreter|sliver-\w+|pwncat|weevely|chisel|ligolo\S*|mimikatz|john\s+--(?:wordlist|format|show)|responder\s+-I)\b{{NO_HELP}}
+HIGH,crypto-miner,T1496,cryptocurrency miner,no,{{CMD_POS}}(?:xmrig|minerd|cpuminer|ethminer|nbminer|cgminer|bfgminer|minergate|nicehash)\b{{NO_HELP}}|stratum\+(?:tcp|ssl)|--donate-level|pool\.(?:minexmr|supportxmr|hashvault)
+MEDIUM,net-scan,T1046,network scanner,no,{{CMD_POS}}(?:nmap|masscan|zmap|unicornscan|nbtscan|arp-scan|netdiscover)\b{{NO_HELP}}
+MEDIUM,sniff-spoof,T1040,packet sniffing / spoofing,no,{{CMD_POS}}(?:tcpdump|tshark|ettercap|bettercap|arpspoof|dsniff)\b{{NO_HELP}}
+MEDIUM,tunnel,T1572,tunnelling / proxy tooling,no,\bssh\b[^|;&]*\s-\w*[RD]\b|{{CMD_POS}}(?:ngrok|localtunnel|cloudflared\s+tunnel|serveo|frpc|frps|proxychains|torsocks|sshuttle|iodine|dnscat2?)\b{{NO_HELP}}

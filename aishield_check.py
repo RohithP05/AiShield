@@ -38,11 +38,18 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
-# the corpus is stored gzipped; a plain .csv dropped next to it works as a fallback
+# the corpus is stored gzipped; a plain .csv dropped next to it works as a fallback.
+# the generator writes into dataset\, so that folder is searched as well. Root wins
+# (documented location), dataset\ is the fallback if the root copy is missing.
 ATTACK_CSV = next((p for p in (BASE / "atomic_linux_commands.csv.gz",
-                               BASE / "atomic_linux_commands.csv") if p.exists()),
+                               BASE / "atomic_linux_commands.csv",
+                               BASE / "dataset" / "atomic_linux_commands.csv.gz",
+                               BASE / "dataset" / "atomic_linux_commands.csv") if p.exists()),
                   BASE / "atomic_linux_commands.csv.gz")
 BENIGN_CSV = BASE / "benign_linux_commands.csv"
+# authoritative MITRE ATT&CK technique-name lookup (active Enterprise techniques).
+# the attack corpus only names ~118 IDs, so it is no longer the name source.
+TECHNAMES_CSV = BASE / "dataset" / "attack_technique_names.csv"
 
 ATTACK_THRESHOLD = 0.60   # min similarity to a known attack to raise a REVIEW
 MARGIN = 0.15             # attack similarity must beat benign similarity by this much
@@ -129,10 +136,17 @@ _TECH = None
 
 
 def mitre_label(ids):
-    """'T1105/T1059.004' -> 'T1105 Ingress Tool Transfer / T1059.004 Unix Shell' using names from the Atomic CSV."""
+    """'T1105/T1059.004' -> 'T1105 Ingress Tool Transfer / T1059.004 Unix Shell'.
+
+    Names come from dataset/attack_technique_names.csv (the full active ATT&CK
+    set); the attack corpus only fills whatever gap remains.
+    """
     global _TECH
     if _TECH is None:
         _TECH = {}
+        if TECHNAMES_CSV.exists():
+            for r in read_table(TECHNAMES_CSV, ["attack_technique", "technique_name"]):
+                _TECH.setdefault(r["attack_technique"].strip(), r["technique_name"].strip())
         if ATTACK_CSV.exists():
             for r in read_table(ATTACK_CSV, ["attack_technique", "technique_name"]):
                 _TECH.setdefault(r["attack_technique"].strip(), r["technique_name"].strip())
