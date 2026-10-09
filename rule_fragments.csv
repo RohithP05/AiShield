@@ -1,0 +1,7 @@
+name,pattern
+SHELLS,(?:(?:(?:/\S*/)?(?:ba|z|da|k|c|tc|a)?sh|source|eval)\b|(?:python[\d.]*|perl|ruby|node|php|lua)(?!\w)(?!\s+-[a-z]))
+SENS_HIGH,(?:/etc/shadow|/etc/gshadow|/etc/ssh/ssh_host_\w+_key|\.ssh/id_[a-z0-9_]+\b(?!\.pub)|\.aws/credentials|\.kube/config|\.docker/config\.json|\.git-credentials|\.netrc|\.pypirc|\.gnupg|\.config/gcloud|\.azure/|/proc/(?:\d+|self)/(?:environ|mem)|login data|cookies\.sqlite|logins\.json|key[34]\.db|\.password-store|\.kdbx)
+READ_VERBS,(?:cat|less|more|head|tail|nl|tac|cp|scp|rsync|tar|zip|7z|gzip|base64|xxd|od|hexdump|strings|grep|egrep|awk|sed|mv|dd|openssl|gpg|curl|wget|sqlite3|nc|ncat|python[\d.]*|perl|ruby|node|bat|vim?|nano|xclip|pbcopy)
+NET_TOOLS,(?:curl|wget|nc|ncat|netcat|socat|telnet|ftp|sftp|scp)
+SEC_TOOLS,(?:auditd|falcon|osqueryd?|wazuh|clamd?|ossec|sysmon|crowdstrike|cbagent|sentinel|snort|suricata|tripwire|aide|rkhunter|chkrootkit|fail2ban|ufw|apparmor|firewalld|selinux|rsyslogd?|syslogd?|syslog-ng|journald|defender)
+EXFIL_HOSTS,(?:pastebin\.com|paste\.ee|hastebin|transfer\.sh|file\.io|0x0\.st|ix\.io|termbin\.com|webhook\.site|requestbin|pipedream\.net|ngrok\.(?:io|app|dev)|discord(?:app)?\.com/api/webhooks|api\.telegram\.org/bot|interact\.sh|oast\.(?:pro|live|site|online|fun|me)|burpcollaborator|canarytokens|\.onion\b)

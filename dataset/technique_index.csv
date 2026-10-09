@@ -1,0 +1,340 @@
+attack_technique,technique_name,is_subtechnique,atomic_files,tests_with_command,command_rows,linux_rows,macos_rows,platforms,has_placeholder_rows
+T1001.002,Data Obfuscation via Steganography,yes,1,3,3,1,0,linux|windows,0
+T1003,OS Credential Dumping,no,1,7,7,0,0,windows,0
+T1003.001,OS Credential Dumping: LSASS Memory,yes,1,13,13,0,0,windows,0
+T1003.002,OS Credential Dumping: Security Account Manager,yes,1,8,8,0,0,windows,0
+T1003.003,OS Credential Dumping: NTDS,yes,1,11,11,0,0,windows,0
+T1003.004,OS Credential Dumping: LSA Secrets,yes,1,2,2,0,0,windows,0
+T1003.005,OS Credential Dumping: Cached Domain Credentials,yes,1,1,1,0,0,windows,0
+T1003.006,OS Credential Dumping: DCSync,yes,1,2,2,0,0,windows,0
+T1003.007,OS Credential Dumping: Proc Filesystem,yes,1,4,4,4,0,linux,0
+T1003.008,"OS Credential Dumping: /etc/passwd, /etc/master.passwd and /etc/shadow",yes,1,5,5,5,0,linux,0
+T1005,Data from Local System,no,1,3,3,1,1,linux|macos|windows,0
+T1006,Direct Volume Access,no,1,1,1,0,0,windows,0
+T1007,System Service Discovery,no,1,8,8,2,1,linux|macos|windows,0
+T1010,Application Window Discovery,no,1,1,1,0,0,windows,0
+T1012,Query Registry,no,1,6,6,0,0,windows,0
+T1014,Rootkit,no,1,4,4,4,0,linux,0
+T1016,System Network Configuration Discovery,no,1,10,10,1,2,linux|macos|windows,0
+T1016.001,System Network Configuration Discovery: Internet Connection Discovery,yes,1,5,5,1,1,linux|macos|windows,0
+T1016.002,System Network Configuration Discovery: Wi-Fi Discovery,yes,1,1,1,0,0,windows,0
+T1018,Remote System Discovery,no,1,23,23,7,3,linux|macos|windows,0
+T1020,Automated Exfiltration,no,1,2,2,0,0,windows,0
+T1021.001,Remote Services: Remote Desktop Protocol,yes,1,4,4,0,0,windows,1
+T1021.002,Remote Services: SMB/Windows Admin Shares,yes,1,4,4,0,0,windows,0
+T1021.003,Remote Services: Distributed Component Object Model,yes,1,2,2,0,0,windows,0
+T1021.004,Remote Services: SSH,yes,1,2,2,0,0,windows,0
+T1021.005,Remote Services:VNC,yes,1,1,1,0,1,macos,0
+T1021.006,Remote Services: Windows Remote Management,yes,1,3,3,0,0,windows,0
+T1025,Data from Removable Media,no,1,1,1,0,0,windows,0
+T1027,Obfuscated Files or Information,no,1,10,10,1,1,linux|macos|windows,0
+T1027.001,Obfuscated Files or Information: Binary Padding,yes,1,2,2,2,2,linux|macos,0
+T1027.002,Obfuscated Files or Information: Software Packing,yes,1,4,4,2,2,linux|macos,0
+T1027.004,Obfuscated Files or Information: Compile After Delivery,yes,1,5,5,3,3,linux|macos|windows,0
+T1027.006,HTML Smuggling,yes,1,1,1,0,0,windows,0
+T1027.007,Obfuscated Files or Information: Dynamic API Resolution,yes,1,1,1,0,0,windows,0
+T1027.013,Obfuscated Files or Information: Encrypted/Encoded File,yes,1,4,4,3,3,linux|macos|windows,0
+T1027.018,Obfuscated Files or Information: Invisible Unicode,yes,1,3,3,0,0,windows,0
+T1030,Data Transfer Size Limits,no,1,2,2,1,1,linux|macos|windows,0
+T1033,System Owner/User Discovery,no,1,8,8,1,1,linux|macos|windows,0
+T1036,Masquerading,no,1,2,2,0,0,windows,0
+T1036.002,Masquerading:Right-to-Left Override,yes,1,2,2,0,0,windows,0
+T1036.003,Masquerading: Rename System Utilities,yes,1,8,8,1,0,linux|windows,0
+T1036.004,Masquerading: Masquerade Task or Service,yes,1,4,4,2,0,linux|windows,0
+T1036.005,Masquerading: Match Legitimate Name or Location,yes,1,3,3,1,1,linux|macos|windows,0
+T1036.006,Masquerading: Space after Filename,yes,1,1,1,1,1,linux|macos,0
+T1036.007,Masquerading: Double File Extension,yes,1,2,2,1,0,linux|windows,0
+T1036.008,Masquerading: Masquerade File Type,yes,1,1,1,1,0,linux,0
+T1037.001,Boot or Logon Initialization Scripts: Logon Script (Windows),yes,1,1,1,0,0,windows,0
+T1037.002,Boot or Logon Initialization Scripts: Logon Script (Mac),yes,1,0,0,0,0,,0
+T1037.004,Boot or Logon Initialization Scripts: Rc.common,yes,1,3,3,2,1,linux|macos,0
+T1037.005,Boot or Logon Initialization Scripts: Startup Items,yes,1,3,3,0,3,macos,0
+T1039,Data from Network Shared Drive,no,1,2,2,0,0,windows,0
+T1040,Network Sniffing,no,1,16,16,8,3,linux|macos|windows,0
+T1041,Exfiltration Over C2 Channel,no,1,2,2,0,0,windows,0
+T1046,Network Service Discovery,no,1,13,13,3,3,containers|linux|macos|windows,1
+T1047,Windows Management Instrumentation,no,1,12,12,0,0,windows,0
+T1048,Exfiltration Over Alternative Protocol,no,1,4,4,3,3,linux|macos|windows,0
+T1048.002,Exfiltration Over Alternative Protocol - Exfiltration Over Asymmetric Encrypted Non-C2 Protocol,yes,1,4,4,3,1,linux|macos|windows,0
+T1048.003,Exfiltration Over Alternative Protocol: Exfiltration Over Unencrypted/Obfuscated Non-C2 Protocol,yes,1,6,6,1,0,linux|windows,0
+T1049,System Network Connections Discovery,no,1,7,7,3,2,linux|macos|windows,0
+T1053.002,Scheduled Task/Job: At,yes,1,3,3,1,0,containers|linux|windows,0
+T1053.003,Scheduled Task/Job: Cron,yes,1,4,4,4,2,linux|macos,0
+T1053.005,Scheduled Task/Job: Scheduled Task,yes,1,14,14,0,0,windows,0
+T1053.006,Scheduled Task/Job: Systemd Timers,yes,1,3,3,3,0,linux,0
+T1053.007,Kubernetes Cronjob,yes,1,2,2,0,0,containers,0
+T1055,Process Injection,no,1,13,13,0,0,windows,0
+T1055.001,Process Injection: Dynamic-link Library Injection,yes,1,2,2,0,0,windows,0
+T1055.002,Process Injection: Portable Executable Injection,yes,1,1,1,0,0,windows,0
+T1055.003,Thread Execution Hijacking,yes,1,1,1,0,0,windows,0
+T1055.004,Process Injection: Asynchronous Procedure Call,yes,1,3,3,0,0,windows,0
+T1055.009,Process Injection: Proc Memory,yes,1,6,6,6,0,linux,0
+T1055.011,Process Injection: Extra Window Memory Injection,yes,1,1,1,0,0,windows,0
+T1055.012,Process Injection: Process Hollowing,yes,1,4,4,0,0,windows,0
+T1055.015,Process Injection: ListPlanting,yes,1,1,1,0,0,windows,0
+T1056.001,Input Capture: Keylogging,yes,1,8,8,6,1,linux|macos|windows,0
+T1056.002,Input Capture: GUI Input Capture,yes,1,3,3,0,2,macos|windows,0
+T1056.004,Input Capture: Credential API Hooking,yes,1,1,1,0,0,windows,0
+T1057,Process Discovery,no,1,10,10,1,1,linux|macos|windows,0
+T1059,Command and Scripting Interpreter,no,1,1,1,0,0,windows,0
+T1059.001,Command and Scripting Interpreter: PowerShell,yes,1,21,21,0,0,windows,0
+T1059.003,Command and Scripting Interpreter: Windows Command Shell,yes,1,6,6,0,0,windows,0
+T1059.004,Command and Scripting Interpreter: Bash,yes,1,17,17,17,5,linux|macos,0
+T1059.005,Command and Scripting Interpreter: Visual Basic,yes,1,3,3,0,0,windows,0
+T1059.006,Command and Scripting Interpreter: Python,yes,1,4,4,4,0,linux,0
+T1059.007,Command and Scripting Interpreter: JavaScript,yes,1,5,5,0,0,windows,0
+T1059.010,Command and Scripting Interpreter: AutoHotKey & AutoIT,yes,1,1,1,0,0,windows,0
+T1068,Exploitation for Privilege Escalation,no,1,2,2,0,0,windows,0
+T1069.001,Permission Groups Discovery: Local Groups,yes,1,7,7,1,1,containers|linux|macos|windows,0
+T1069.002,Permission Groups Discovery: Domain Groups,yes,1,15,15,1,0,linux|windows,0
+T1070,Indicator Removal on Host,no,1,2,2,0,0,windows,0
+T1070.003,Indicator Removal on Host: Clear Command History,yes,1,14,14,10,6,linux|macos|windows,0
+T1070.004,Indicator Removal on Host: File Deletion,yes,1,11,11,4,2,linux|macos|windows,0
+T1070.005,Indicator Removal on Host: Network Share Connection Removal,yes,1,5,5,0,0,windows,0
+T1070.006,Indicator Removal on Host: Timestomp,yes,1,10,10,4,5,linux|macos|windows,0
+T1070.008,Email Collection: Mailbox Manipulation,yes,1,6,6,2,2,linux|macos|windows,0
+T1071,Application Layer Protocol,no,1,1,1,0,0,windows,0
+T1071.004,Application Layer Protocol: DNS,yes,1,4,4,0,0,windows,0
+T1072,Software Deployment Tools,no,1,3,3,0,0,windows,0
+T1074.001,Data Staged: Local Data Staging,yes,1,3,3,1,1,linux|macos|windows,0
+T1078.001,Valid Accounts: Default Accounts,yes,1,3,3,0,1,macos|windows,0
+T1078.003,Valid Accounts: Local Accounts,yes,1,13,13,5,4,linux|macos|windows,0
+T1078.004,Valid Accounts: Cloud Accounts,yes,1,3,3,0,0,google-workspace|iaas:azure|iaas:gcp,0
+T1082,System Information Discovery,no,1,41,41,8,6,azure-ad|linux|macos|windows,0
+T1083,File and Directory Discovery,no,1,9,9,3,2,linux|macos|windows,0
+T1087.001,Account Discovery: Local Account,yes,1,11,11,6,5,linux|macos|windows,0
+T1087.002,Account Discovery: Domain Account,yes,1,24,24,2,0,linux|windows,0
+T1090.001,Proxy: Internal Proxy,yes,1,3,3,1,2,linux|macos|windows,0
+T1090.003,Proxy: Multi-hop Proxy,yes,1,4,4,1,1,linux|macos|windows,0
+T1091,Replication Through Removable Media,no,1,1,1,0,0,windows,0
+T1095,Non-Application Layer Protocol,no,1,4,4,0,0,windows,0
+T1098,Account Manipulation,no,1,17,17,0,0,azure-ad|iaas:aws|iaas:azure|iaas:gcp|windows,1
+T1098.001,Account Manipulation: Additional Cloud Credentials,yes,1,3,3,0,0,azure-ad|iaas:aws,0
+T1098.002,Account Manipulation: Additional Email Delegate Permissions,yes,1,1,1,0,0,office-365,0
+T1098.003,Account Manipulation: Additional Cloud Roles,yes,1,2,2,0,0,azure-ad,0
+T1098.004,SSH Authorized Keys,yes,1,1,1,1,1,linux|macos,0
+T1102.002,Web Service: Bidirectional Communication,yes,1,1,1,1,0,linux,0
+T1105,Ingress Tool Transfer,no,1,39,39,8,8,containers|linux|macos|windows,0
+T1106,Native API,no,1,5,5,0,0,windows,0
+T1110.001,Brute Force: Password Guessing,yes,1,8,8,3,0,azure-ad|linux|windows,0
+T1110.002,Brute Force: Password Cracking,yes,1,1,1,0,0,windows,0
+T1110.003,Brute Force: Password Spraying,yes,1,9,9,0,0,azure-ad|iaas:aws|windows,0
+T1110.004,Brute Force: Credential Stuffing,yes,1,4,4,2,1,linux|macos|windows,0
+T1112,Modify Registry,no,1,92,92,0,0,windows,0
+T1113,Screen Capture,no,1,10,10,4,2,linux|macos|windows,0
+T1114.001,Email Collection: Local Email Collection,yes,1,1,1,0,0,windows,0
+T1114.002,Email Collection: Remote Email Collection,yes,1,1,1,0,0,office-365,0
+T1114.003,Email Collection: Email Forwarding Rule,yes,1,1,1,0,0,office-365,0
+T1115,Clipboard Data,no,1,5,5,1,1,linux|macos|windows,0
+T1119,Automated Collection,no,1,4,4,0,0,windows,0
+T1120,Peripheral Device Discovery,no,1,4,4,0,0,windows,0
+T1123,Audio Capture,no,1,3,3,0,1,macos|windows,0
+T1124,System Time Discovery,no,1,6,6,1,1,linux|macos|windows,0
+T1125,Video Capture,no,1,1,1,0,0,windows,0
+T1127,Trusted Developer Utilities Proxy Execution,no,1,2,2,0,0,windows,0
+T1127.001,Trusted Developer Utilities Proxy Execution: MSBuild,yes,1,2,2,0,0,windows,0
+T1129,Shared Modules,no,1,1,1,0,0,windows,0
+T1132.001,Data Encoding: Standard Encoding,yes,1,3,3,2,1,linux|macos|windows,0
+T1133,External Remote Services,no,1,1,1,0,0,windows,0
+T1134.001,Access Token Manipulation: Token Impersonation/Theft,yes,1,5,5,0,0,windows,0
+T1134.002,Create Process with Token,yes,1,2,2,0,0,windows,0
+T1134.004,Access Token Manipulation: Parent PID Spoofing,yes,1,5,5,0,0,windows,0
+T1134.005,Access Token Manipulation: SID-History Injection,yes,1,1,1,0,0,windows,0
+T1135,Network Share Discovery,no,1,12,12,2,1,linux|macos|windows,0
+T1136.001,Create Account: Local Account,yes,1,10,10,4,1,containers|linux|macos|windows,0
+T1136.002,Create Account: Domain Account,yes,1,5,5,2,0,linux|windows,0
+T1136.003,Create Account: Cloud Account,yes,1,3,3,0,0,azure-ad|iaas:aws,0
+T1137,Office Application Startup,no,1,1,1,0,0,windows,0
+T1137.001,Office Application Startup: Office Template Macros.,yes,1,1,1,0,0,windows,0
+T1137.002,Office Application Startup: Office Test,yes,1,1,1,0,0,windows,0
+T1137.004,Office Application Startup: Outlook Home Page,yes,1,1,1,0,0,windows,0
+T1137.005,Office Application Startup: Outlook Rules,yes,1,5,5,0,0,windows,0
+T1137.006,Office Application Startup: Add-ins,yes,1,5,5,0,0,windows,0
+T1140,Deobfuscate/Decode Files or Information,no,1,11,11,8,6,linux|macos|windows,0
+T1176,Browser Extensions,no,1,1,1,0,0,windows,0
+T1187,Forced Authentication,no,1,3,3,0,0,windows,0
+T1195,Supply Chain Compromise,no,1,1,1,0,0,windows,0
+T1195.002,Compromise Software Supply Chain,yes,1,1,1,1,0,containers|linux,0
+T1197,BITS Jobs,no,1,4,4,0,0,windows,0
+T1201,Password Policy Discovery,no,1,12,12,5,1,iaas:aws|linux|macos|windows,0
+T1202,Indirect Command Execution,no,1,5,5,0,0,windows,0
+T1204.002,User Execution: Malicious File,yes,1,13,13,0,0,windows,1
+T1204.003,User Execution: Malicious Image,yes,1,1,1,0,0,windows,0
+T1204.004,Malicious Copy and Paste,yes,1,0,0,0,0,,0
+T1207,Rogue Domain Controller,no,1,1,1,0,0,windows,0
+T1216,Signed Script Proxy Execution,no,1,1,1,0,0,windows,0
+T1216.001,Signed Script Proxy Execution: Pubprn,yes,1,1,1,0,0,windows,0
+T1216.002,System Script Proxy Execution: SyncAppvPublishingServer,yes,1,1,1,0,0,windows,0
+T1217,Browser Bookmark Discovery,no,1,11,11,2,3,linux|macos|windows,0
+T1218,Signed Binary Proxy Execution,no,1,16,16,0,0,windows,0
+T1218.001,Signed Binary Proxy Execution: Compiled HTML File,yes,1,8,8,0,0,windows,0
+T1218.002,Signed Binary Proxy Execution: Control Panel,yes,1,1,1,0,0,windows,0
+T1218.003,Signed Binary Proxy Execution: CMSTP,yes,1,2,2,0,0,windows,0
+T1218.004,Signed Binary Proxy Execution: InstallUtil,yes,1,8,8,0,0,windows,0
+T1218.005,Signed Binary Proxy Execution: Mshta,yes,1,10,10,0,0,windows,0
+T1218.007,Signed Binary Proxy Execution: Msiexec,yes,1,11,11,0,0,windows,0
+T1218.008,Signed Binary Proxy Execution: Odbcconf,yes,1,2,2,0,0,windows,0
+T1218.009,Signed Binary Proxy Execution: Regsvcs/Regasm,yes,1,2,2,0,0,windows,0
+T1218.010,Signed Binary Proxy Execution: Regsvr32,yes,1,5,5,0,0,windows,0
+T1218.011,Signed Binary Proxy Execution: Rundll32,yes,1,16,16,0,0,windows,0
+T1219,Remote Access Software,no,1,15,15,0,0,windows,0
+T1220,XSL Script Processing,no,1,4,4,0,0,windows,0
+T1221,Template Injection,no,1,1,1,0,0,windows,0
+T1222,File and Directory Permissions Modification,no,1,3,3,0,0,windows,0
+T1222.001,File and Directory Permissions Modification: Windows File and Directory Permissions Modification,yes,1,6,6,0,0,windows,0
+T1222.002,"File and Directory Permissions Modification: FreeBSD, Linux and Mac File and Directory Permissions Modification",yes,1,14,14,14,11,linux|macos,0
+T1482,Domain Trust Discovery,no,1,8,8,0,0,windows,0
+T1484.001,Domain Policy Modification: Group Policy Modification,yes,1,2,2,0,0,windows,0
+T1484.002,Domain Trust Modification,yes,1,1,1,0,0,azure-ad,0
+T1485,Data Destruction,no,1,5,5,1,1,iaas:gcp|linux|macos|windows,0
+T1486,Data Encrypted for Impact,no,1,10,10,4,2,linux|macos|windows,0
+T1489,Service Stop,no,1,9,9,5,0,linux|windows,0
+T1490,Inhibit System Recovery,no,1,13,13,0,1,macos|windows,0
+T1491.001,Defacement: Internal Defacement,yes,1,4,4,0,0,windows,0
+T1496,Resource Hijacking,no,1,2,2,1,1,linux|macos|windows,0
+T1497.001,Virtualization/Sandbox Evasion: System Checks,yes,1,9,9,2,4,linux|macos|windows,0
+T1497.003,Time Based Evasion,yes,1,1,1,1,1,linux|macos,0
+T1505.002,Server Software Component: Transport Agent,yes,1,1,1,0,0,windows,0
+T1505.003,Server Software Component: Web Shell,yes,1,1,1,0,0,windows,0
+T1505.004,IIS Components,yes,1,2,2,0,0,windows,0
+T1505.005,Server Software Component: Terminal Services DLL,yes,1,2,2,0,0,windows,0
+T1518.001,Software Discovery: Security Software Discovery,yes,1,12,12,2,1,linux|macos|windows,0
+T1526,Cloud Service Discovery,no,1,3,3,0,0,iaas:aws|iaas:azure,1
+T1528,Steal Application Access Token,no,1,2,2,0,0,iaas:azure,0
+T1529,System Shutdown/Reboot,no,1,16,16,10,3,linux|macos|windows,0
+T1530,Data from Cloud Storage Object,no,1,2,2,0,0,iaas:aws|iaas:azure,0
+T1531,Account Access Removal,no,1,8,8,1,3,azure-ad|linux|macos|windows,0
+T1539,Steal Web Session Cookie,no,1,5,5,0,2,macos|windows,0
+T1542.001,Pre-OS Boot: System Firmware,yes,1,1,1,0,0,windows,0
+T1543.001,Create or Modify System Process: Launch Agent,yes,1,3,3,0,3,macos,0
+T1543.002,Create or Modify System Process: SysV/Systemd Service,yes,1,4,4,4,0,linux,0
+T1543.003,Create or Modify System Process: Windows Service,yes,1,6,6,0,0,windows,0
+T1543.004,Create or Modify System Process: Launch Daemon,yes,1,1,1,0,1,macos,0
+T1546,Event Triggered Execution,no,1,9,9,0,0,windows,0
+T1546.001,Event Triggered Execution: Change Default File Association,yes,1,1,1,0,0,windows,0
+T1546.002,Event Triggered Execution: Screensaver,yes,1,1,1,0,0,windows,0
+T1546.003,Event Triggered Execution: Windows Management Instrumentation Event Subscription,yes,1,4,4,0,0,windows,0
+T1546.004,Event Triggered Execution: .bash_profile .bashrc and .shrc,yes,1,7,7,7,2,linux|macos,0
+T1546.005,Event Triggered Execution: Trap,yes,1,5,5,5,3,linux|macos,0
+T1546.007,Event Triggered Execution: Netsh Helper DLL,yes,1,1,1,0,0,windows,0
+T1546.008,Event Triggered Execution: Accessibility Features,yes,1,10,10,0,0,windows,0
+T1546.009,Event Triggered Execution: AppCert DLLs,yes,1,1,1,0,0,windows,0
+T1546.010,Event Triggered Execution: AppInit DLLs,yes,1,1,1,0,0,windows,0
+T1546.011,Event Triggered Execution: Application Shimming,yes,1,3,3,0,0,windows,0
+T1546.012,Event Triggered Execution: Image File Execution Options Injection,yes,1,3,3,0,0,windows,0
+T1546.013,Event Triggered Execution: PowerShell Profile,yes,1,2,2,0,0,windows,0
+T1546.014,Event Triggered Execution: Emond,yes,1,1,1,0,1,macos,0
+T1546.015,Event Triggered Execution: Component Object Model Hijacking,yes,1,4,4,0,0,windows,0
+T1546.018,Event Triggered Execution: Python Startup Hooks,yes,1,5,5,2,2,linux|macos|windows,0
+T1547,Boot or Logon Autostart Execution,no,1,3,3,0,0,windows,0
+T1547.001,Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder,yes,1,21,21,0,0,windows,0
+T1547.002,Authentication Package,yes,1,1,1,0,0,windows,0
+T1547.003,Time Providers,yes,1,2,2,0,0,windows,0
+T1547.004,Boot or Logon Autostart Execution: Winlogon Helper DLL,yes,1,5,5,0,0,windows,0
+T1547.005,Boot or Logon Autostart Execution: Security Support Provider,yes,1,2,2,0,0,windows,0
+T1547.006,Boot or Logon Autostart Execution: Kernel Modules and Extensions,yes,1,4,4,1,2,linux|macos|windows,0
+T1547.007,Boot or Logon Autostart Execution: Re-opened Applications,yes,1,3,3,0,3,macos,0
+T1547.008,Boot or Logon Autostart Execution: LSASS Driver,yes,1,1,1,0,0,windows,0
+T1547.009,Boot or Logon Autostart Execution: Shortcut Modification,yes,1,2,2,0,0,windows,0
+T1547.010,Boot or Logon Autostart Execution: Port Monitors,yes,1,1,1,0,0,windows,0
+T1547.012,Boot or Logon Autostart Execution: Print Processors,yes,1,1,1,0,0,windows,0
+T1547.014,Active Setup,yes,1,3,3,0,0,windows,0
+T1547.015,Boot or Logon Autostart Execution: Login Items,yes,1,2,2,0,1,macos|windows,0
+T1548.001,Abuse Elevation Control Mechanism: Setuid and Setgid,yes,1,10,10,10,3,linux|macos,0
+T1548.002,Abuse Elevation Control Mechanism: Bypass User Account Control,yes,1,28,28,0,0,windows,0
+T1548.003,Abuse Elevation Control Mechanism: Sudo and Sudo Caching,yes,1,6,6,6,3,linux|macos,0
+T1550.002,Use Alternate Authentication Material: Pass the Hash,yes,1,3,3,0,0,windows,0
+T1550.003,Use Alternate Authentication Material: Pass the Ticket,yes,1,2,2,0,0,windows,0
+T1552,Unsecured Credentials,no,1,2,2,1,1,iaas:aws|linux|macos|windows,0
+T1552.001,Unsecured Credentials: Credentials In Files,yes,1,32,32,21,19,linux|macos|windows,0
+T1552.002,Unsecured Credentials: Credentials in Registry,yes,1,2,2,0,0,windows,0
+T1552.003,Unsecured Credentials: Bash History,yes,1,4,4,4,2,linux|macos,0
+T1552.004,Unsecured Credentials: Private Keys,yes,1,17,17,10,4,linux|macos|windows,0
+T1552.005,Unsecured Credentials: Cloud Instance Metadata API,yes,1,3,3,1,0,azure-ad|iaas:aws|iaas:azure|linux,0
+T1552.006,Unsecured Credentials: Group Policy Preferences,yes,1,2,2,0,0,windows,0
+T1552.007,Kubernetes List Secrets,yes,1,3,3,1,0,containers|linux,0
+T1553.001,Subvert Trust Controls: Gatekeeper Bypass,yes,1,1,1,0,1,macos,0
+T1553.003,Subvert Trust Controls: SIP and Trust Provider Hijacking,yes,1,1,1,0,0,windows,0
+T1553.004,Subvert Trust Controls: Install Root Certificate,yes,1,7,7,3,1,linux|macos|windows,0
+T1553.006,Subvert Trust Controls: Code Signing Policy Modification,yes,1,1,1,0,0,windows,0
+T1555,Credentials from Password Stores,no,1,9,9,0,0,windows,0
+T1555.001,Credentials from Password Stores: Keychain,yes,1,4,4,0,4,macos,0
+T1555.003,Credentials from Password Stores: Credentials from Web Browsers,yes,1,18,18,1,3,linux|macos|windows,0
+T1555.006,Credentials from Password Stores: Cloud Secrets Management Stores,yes,1,1,1,0,0,iaas:azure,0
+T1556.001,Modify Authentication Process: Domain Controller Authentication,yes,1,1,1,0,0,windows,0
+T1556.002,Modify Authentication Process: Password Filter DLL,yes,1,2,2,0,0,windows,0
+T1556.003,Modify Authentication Process: Pluggable Authentication Modules,yes,1,3,3,3,0,linux,0
+T1557.001,Adversary-in-the-Middle: LLMNR/NBT-NS Poisoning and SMB Relay,yes,1,1,1,0,0,windows,0
+T1558.001,Steal or Forge Kerberos Tickets: Golden Ticket,yes,1,2,2,0,0,windows,0
+T1558.002,Steal or Forge Kerberos Tickets: Silver Ticket,yes,1,1,1,0,0,windows,0
+T1558.003,Steal or Forge Kerberos Tickets: Kerberoasting,yes,1,7,7,0,0,windows,0
+T1558.004,Steal or Forge Kerberos Tickets: AS-REP Roasting,yes,1,3,3,0,0,windows,0
+T1559,Inter-Process Communication,no,1,7,7,0,0,windows,0
+T1559.002,Inter-Process Communication: Dynamic Data Exchange,yes,1,1,1,0,0,windows,0
+T1560,Archive Collected Data,no,1,1,1,0,0,windows,0
+T1560.001,Archive Collected Data: Archive via Utility,yes,1,13,13,5,6,linux|macos|windows,0
+T1560.002,Archive Collected Data: Archive via Library,yes,1,4,4,4,0,linux,0
+T1563.002,Remote Service Session Hijacking: RDP Hijacking,yes,1,1,1,0,0,windows,0
+T1564,Hide Artifacts,no,1,5,5,0,0,windows,0
+T1564.001,Hide Artifacts: Hidden Files and Directories,yes,1,10,10,1,5,linux|macos|windows,0
+T1564.002,Hide Artifacts: Hidden Users,yes,1,3,3,0,2,macos|windows,0
+T1564.003,Hide Artifacts: Hidden Window,yes,1,3,3,0,0,windows,0
+T1564.004,Hide Artifacts: NTFS File Attributes,yes,1,5,5,0,0,windows,0
+T1564.006,Run Virtual Instance,yes,1,3,3,0,0,windows,0
+T1564.008,Hide Artifacts: Email Hiding Rules,yes,1,1,1,0,0,office-365,0
+T1564.012,Hide Artifacts: File/Path Exclusions,yes,1,1,1,0,0,windows,0
+T1566.001,Phishing: Spearphishing Attachment,yes,1,2,2,0,0,windows,0
+T1566.002,Phishing: Spearphishing Link,yes,1,1,1,0,0,windows,0
+T1567.002,Exfiltration Over Web Service: Exfiltration to Cloud Storage,yes,1,2,2,1,1,linux|macos|windows,1
+T1567.003,Exfiltration Over Web Service: Exfiltration to Text Storage Sites,yes,1,1,1,0,0,windows,0
+T1567.004,Exfiltration Over Web Service: Exfiltration Over Webhook,yes,1,4,4,2,2,linux|macos|windows,0
+T1568.002,Dynamic Resolution: Domain Generation Algorithms,yes,1,1,1,1,0,linux,0
+T1569.001,System Services: Launchctl,yes,1,1,1,0,1,macos,0
+T1569.002,System Services: Service Execution,yes,1,8,8,1,0,linux|windows,1
+T1569.003,System Services: Systemctl,yes,1,8,8,8,0,linux,0
+T1570,Lateral Tool Transfer,no,1,2,2,0,0,windows,0
+T1571,Non-Standard Port,no,1,2,2,1,1,linux|macos|windows,0
+T1572,Protocol Tunneling,no,1,9,9,5,3,linux|macos|windows,2
+T1573,Encrypted Channel,no,1,1,1,0,0,windows,0
+T1574.001,Hijack Execution Flow: DLL,yes,1,7,7,0,0,windows,0
+T1574.006,Hijack Execution Flow: LD_PRELOAD,yes,1,3,3,2,1,linux|macos,0
+T1574.008,Hijack Execution Flow: Path Interception by Search Order Hijacking,yes,1,1,1,0,0,windows,0
+T1574.009,Hijack Execution Flow: Path Interception by Unquoted Path,yes,1,1,1,0,0,windows,0
+T1574.011,Hijack Execution Flow: Services Registry Permissions Weakness,yes,1,2,2,0,0,windows,0
+T1574.012,Hijack Execution Flow: COR_PROFILER,yes,1,3,3,0,0,windows,0
+T1578.001,Modify Cloud Compute Infrastructure: Create Snapshot,yes,1,3,3,0,0,iaas:aws|iaas:azure|iaas:gcp,0
+T1578.002,Create Cloud Instance,yes,1,2,2,2,0,iaas:aws|linux,0
+T1580,Cloud Infrastructure Discovery,no,1,2,2,1,1,iaas:aws|linux|macos,0
+T1592.001,Gather Victim Host Information: Hardware,yes,1,1,1,0,0,windows,0
+T1595.003,Active Scanning: Wordlist Scanning,yes,1,1,1,1,1,linux|macos|windows,0
+T1606.002,Forge Web Credentials: SAML token,yes,1,1,1,0,0,azure-ad,0
+T1609,Kubernetes Exec Into Container,no,1,2,2,0,0,containers,0
+T1610,Deploy a container,no,1,1,1,0,0,containers,0
+T1611,Escape to Host,no,1,3,3,0,0,containers,0
+T1612,Build Image on Host,no,1,1,1,0,0,containers,0
+T1613,Container and Resource Discovery,no,1,2,2,0,0,containers,0
+T1614,System Location Discovery,no,1,2,2,1,1,linux|macos|windows,0
+T1614.001,System Location Discovery: System Language Discovery,yes,1,10,10,4,0,linux|windows,0
+T1615,Group Policy Discovery,no,1,5,5,0,0,windows,0
+T1619,Cloud Storage Object Discovery,no,1,4,4,0,0,iaas:aws|iaas:azure,0
+T1620,Reflective Code Loading,no,1,3,3,0,0,windows,0
+T1622,Debugger Evasion,no,1,1,1,0,0,windows,0
+T1647,Plist File Modification,no,1,0,0,0,0,,0
+T1648,Serverless Execution,no,1,1,1,0,0,iaas:aws,1
+T1649,Steal or Forge Authentication Certificates,no,1,1,1,0,0,windows,0
+T1651,Cloud Administration Command,no,1,1,1,0,0,iaas:aws,1
+T1652,Device Driver Discovery,no,1,5,5,2,2,linux|macos|windows,0
+T1654,Log Enumeration,no,1,2,2,0,0,windows,0
+T1659,Content Injection,no,1,2,2,1,1,linux|macos|windows,0
+T1680,Local Storage Discovery,no,1,2,2,0,0,windows,0
+T1685,Disable or Modify Tools,no,1,78,78,19,6,iaas:aws|linux|macos|office-365|windows,0
+T1685.001,Disable or Modify Tools: Disable or Modify Windows Event Log,yes,1,10,10,0,0,windows,0
+T1685.002,Disable or Modify Tools: Disable or Modify Cloud Log,yes,1,11,11,3,3,iaas:aws|iaas:azure|iaas:gcp|linux|macos|office-365,0
+T1685.004,Disable or Modify Tools: Disable or Modify Linux Audit System Log,yes,1,2,2,2,0,linux,0
+T1685.005,Disable or Modify Tools: Clear Windows Event Logs,yes,1,4,4,0,0,windows,0
+T1685.006,Disable or Modify Tools: Clear Linux or Mac System Logs,yes,1,20,20,9,12,linux|macos,0
+T1686,Disable or Modify System Firewall,no,1,25,25,13,0,linux|windows,0
+T1686.003,Disable or Modify System Firewall: Windows Host Firewall,yes,1,2,2,0,0,windows,0
+T1688,Safe Mode Boot,no,1,1,1,0,0,windows,0
+T1689,Downgrade Attack,no,1,3,3,1,0,linux|windows,0
+T1690,Prevent Command History Logging,no,1,11,11,9,1,linux|macos|windows,0
